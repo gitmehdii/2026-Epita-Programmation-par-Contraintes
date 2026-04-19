@@ -751,6 +751,143 @@ Python, OR-Tools CP-SAT, MiniZinc, Z3
 
 ---
 
+## 18. Agent de recrutement par optimisation sous contraintes
+
+### Description du probleme et contexte
+Le recrutement optimal consiste a affecter des candidats a des postes en respectant des contraintes de competences, de disponibilite, de budget et de diversite. C'est un probleme d'affectation multicritere (extension du Stable Marriage Problem) avec des contraintes de capacite, de compatibilite d'equipes et de quotas reglementaires. Applications : RH d'entreprise, admissions universitaires, constitution d'equipes de projet.
+
+### References
+- Manlove - *Algorithmics of Matching under Preferences* - World Scientific 2013
+- Romeo et al. - *Optimal Assignment of Students to Projects* - CP 2012
+- [OR-Tools Assignment example](https://developers.google.com/optimization/assignment/assignment_example)
+- Irving - *The Stable Marriage Problem* - 1985
+
+### Point de depart
+```python
+# Modelisation CP-SAT : affectation candidats -> postes
+# Variables : assign[c, p] = 1 si le candidat c est affecte au poste p
+# Contraintes : chaque candidat a au plus 1 poste, chaque poste a au plus k candidats
+#              competences requises couvertes, budget salarial respecte
+#              quotas de diversite (genre, background)
+# Objectif : maximiser la somme des scores de compatibilite
+```
+
+### Contenu CoursIA connexe
+- **GameTheory/** : Gale-Shapley (Stable Marriage) — base algorithmique pour le matching
+- **CSP-4-Scheduling** : contraintes de capacite et d'affectation — directement applicables
+- **CSP-7-Soft** : soft constraints pour les preferences de candidats et de recruteurs
+
+### Technologies pertinentes
+Python, OR-Tools CP-SAT, PuLP
+
+---
+
+## 19. Generation procedurale de niveaux de jeu par propagation de contraintes
+
+### Description du probleme et contexte
+La generation procedurale de niveaux de jeu (donjons, cartes, puzzles) peut etre formulee comme un probleme de satisfaction de contraintes : le niveau genere doit etre jouable, avoir une difficulte cible, et respecter les regles du jeu. L'algorithme WaveFunctionCollapse (WFC) est lui-meme un algorithme de propagation de contraintes. Ce sujet combine creation de contenu et optimisation combinatoire.
+
+### References
+- Karth and Smith - *WaveFunctionCollapse is Constraint Solving in the Wild* - PCG 2017. [PDF](https://adamsmith.as/papers/wfc_is_constraint_solving_in_the_wild.pdf)
+- [WFC reference implementation (GitHub)](https://github.com/mxgmn/WaveFunctionCollapse)
+- Togelius et al. - *Procedural Content Generation in Games* - Springer 2011
+- [PCG Wiki](https://pcg.wikidot.com/)
+
+### Point de depart
+```python
+# Modelisation CP : generation d'un niveau de labyrinthe
+# Variables : tile[x, y] = type de tuile a la position (x, y)
+# Contraintes : adjacence (les tuiles voisines doivent etre compatibles)
+#              unicite du chemin de depart a l'arrivee
+#              nombre d'ennemis/placements respectant la difficulte cible
+# Extension : WaveFunctionCollapse comme algorithme de propagation
+```
+
+### Contenu CoursIA connexe
+- **CSP-1-Fundamentals** : arc consistency, propagation de contraintes — base theorique pour WFC
+- **Sudoku/** : 18 notebooks couvrant la generation et resolution de grilles — pattern similaire
+- *WFC est un algorithme de propagation de contraintes de facto. Ce sujet demontre l'application des CP au game design.*
+
+### Technologies pertinentes
+Python, OR-Tools CP-SAT, pygame
+
+---
+
+## 20. Negociateur multi-agents par optimisation (Mechanism Design)
+
+### Description du probleme et contexte
+Le mechanism design et la theorie des jeux cooperatifs permettent de concevoir des regles d'interaction optimales entre agents ayant des preferences privees. Trouver un accord de negociation multi-parties (Pareto-optimal) sous contraintes de budget, de temps et de strategie est un probleme d'optimisation combinatoire. Applications : enchere combinatoire, partage de ressources, coalition formation.
+
+### References
+- Nisan et al. - *Algorithmic Game Theory* - Cambridge 2007. [En ligne](https://www.cambridge.org/core/books/algorithmic-game-theory/)
+- Roth - *Who Gets What -- and Why* - Houghton Mifflin 2015
+- Sandholm - *Automated Mechanism Design* - UAI 2003
+- [Gale-Shapley implementation](https://en.wikipedia.org/wiki/Gale%E2%80%93Shapley_algorithm)
+
+### Point de depart
+```python
+# Modelisation CP : negociation multi-agents avec contraintes
+# Variables : allocation[a, r] = quantite de ressource r allouee a l'agent a
+# Contraintes : budget de chaque agent, disponibilite des ressources
+#              contrainte de participation (utilite >= utilite de reservation)
+# Objectif : maximiser le welfare social (somme des utilites)
+# Extension : equilibre de Nash sous contraintes, mechanismes incitatifs
+```
+
+### Contenu CoursIA connexe
+- **GameTheory/** : 17+ notebooks couvrant Nash Equilibrium, Cooperative Games, Shapley Value, Mechanism Design — fondation complete
+- **CSP-5-Optimization** : techniques d'optimisation multicritere
+- **CSP-7-Soft** : preferences et utilites comme soft constraints
+- *CoursIA couvre la theorie des jeux en profondeur. Ce sujet l'applique via des solveurs CP.*
+
+### Technologies pertinentes
+Python, OR-Tools CP-SAT, NetworkX, Nashpy
+
+---
+
+## 21. Generation de tests par combinaisons couvrantes (Covering Arrays)
+
+### Description du probleme et contexte
+La generation de tests combinatoires (pairwise testing, t-way testing) consiste a creer un ensemble minimal de configurations de test qui couvrent toutes les combinaisons de valeurs de parametres. C'est un probleme d'optimisation combinatoire classique (covering arrays) avec des applications industrielles majeures : test logiciel, test de configuration, test de securite.
+
+### References
+- Cohen et al. - *The AETG System: An Approach to Testing Based on Combinatorial Design* - IEEE TSE 1997
+- Kuhn et al. - *Combinatorial Software Testing* - Microsoft Research. [PDF](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/CombinatorialTesting.pdf)
+- [NIST Covering Array tools](https://csrc.nist.gov/projects/automated-combinatorial-testing)
+- [ACTS tool (NIST)](https://csrc.nist.gov/Projects/Automated-Combinatorial-Testing/Tools)
+
+### Point de depart
+```python
+# Modelisation CP-SAT : covering array CA(N; t, k, v)
+# Variables : test[i, j] = valeur du parametre j dans le test i
+# Contraintes : pour chaque t-uplet de parametres (j1, ..., jt),
+#              toutes les combinaisons de valeurs apparaissent au moins une fois
+# Objectif : minimiser N (nombre de tests)
+
+# Exemple : pairwise (t=2) testing d'une page web avec
+# 5 navigateurs x 3 OS x 4 resolutions = couvrir toutes les paires
+```
+
+### Instances et donnees
+- [NIST Covering Array Repository](https://math.nist.gov/coveringarrays/) - Instances de reference
+- [Covering array tables (CATS)](https://www.unl.edu/~cse/files/Research/CATS/CATS.html) - Benchmark solver
+
+### Approches suggerees
+- Modelisation CP-SAT pour le covering array problem
+- Extension : t-way testing (t > 2), contraintes de seqwuence (tests ordonnes)
+- Integration avec des frameworks de test (pytest, unittest)
+- Comparaison avec AETG, IPO, et autres heuristiques
+
+### Contenu CoursIA connexe
+- **CSP-1-Fundamentals** : AllDifferent, contraintes de couverture — base theorique
+- **CSP-5-Optimization** : minimisation du nombre de tests
+- *Ce sujet est une application industrielle directe des CSP avec un fort impact pratique.*
+
+### Technologies pertinentes
+Python, OR-Tools CP-SAT, pytest
+
+---
+
 ## Annexe : sujets supprimes (risque de plagiat)
 
 Les sujets suivants ont ete retires car ils ont deja ete traites par des etudiants d'au moins une ecole (Epita 2025, ECE 2026, EPF 2025/2026), ce qui represente un risque de plagiat inacceptable.
