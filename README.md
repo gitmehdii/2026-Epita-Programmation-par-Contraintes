@@ -1,8 +1,8 @@
-# EPITA 2026 - Programmation par Contraintes
+# EPITA 2026 — Programmation par Contraintes
+
 ## Liste des sujets de projet
 
-Ce document presente les sujets de projet pour le cours de Programmation par Contraintes (SCIA).
-Chaque sujet inclut une description detaillee, des references academiques et pratiques, des liens vers des ressources de bootstrapping (tutoriels, notebooks, benchmarks), et les technologies pertinentes.
+Ce document presente les sujets de projet pour le cours de Programmation par Contraintes (SCIA). Chaque sujet inclut une description detaillee, des references academiques et pratiques, des liens vers des ressources de bootstrapping (tutoriels, notebooks, benchmarks), et les technologies pertinentes.
 
 > **Consignes de choix** : Chaque groupe doit forker ce depot et creer un dossier pour son projet contenant le code source, un notebook explicatif, et les slides de soutenance. Les livraisons se font via des pull requests regulieres.
 
@@ -18,898 +18,1485 @@ Chaque sujet inclut une description detaillee, des references academiques et pra
 
 ### Benchmarks et instances
 - **CSPLib** : bibliotheque de problemes CP de reference. [En ligne](https://www.csplib.org/)
-- **OR-Library** : instances pour problemes d'OR. [Beasley's OR-Library](http://people.brunel.ac.uk/~mastjjb/jeb/info.html)
+- **OR-Library** : instances pour problemes d'OR. [Beasley OR-Library](http://people.brunel.ac.uk/~mastjjb/jeb/info.html)
 - **MiniZinc Challenge Benchmarks** : instances de competition. [GitHub](https://github.com/minizinc/minizinc-benchmarks)
 
 ### Notebooks du cours CoursIA
-Les notebooks suivants sont disponibles dans le depot CoursIA (jsboige/CoursIA) et constituent des prerequis ou des points de depart pour les projets :
-- **Search/Part1-Foundations/** : Search-1 (StateSpace), Search-3 (A*, heuristiques), Search-4 (Local Search), Search-9 (Programmation lineaire)
+Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA](https://github.com/jsboige/CoursIA)) et constituent des prerequis ou des points de depart pour les projets :
+- **Search/Part1-Foundations/** : Search-1 (StateSpace), Search-3 (A*, heuristiques), Search-4 (Local Search), Search-9 (Programmation lineaire), Search-11 (Metaheuristiques)
 - **Search/Part2-CSP/** : CSP-1 (Fondamentaux), CSP-4 (Scheduling, IntervalVar, NoOverlap, Cumulative), CSP-5 (Optimization, Bin Packing, Knapsack), CSP-6 (Hybridation CP+SAT, LLM+CSP), CSP-7 (Soft Constraints), CSP-9 (Distributed CSP)
-- **Search/Applications/CSP/** : App-4 (Job-Shop Scheduling), App-8 (MiniZinc), App-17 (VRP Logistics)
-- **Search/Applications/Hybrid/** : App-17 (VRP avec SA, GA, ACO, CP-SAT)
-- **SymbolicAI/SmartContracts/** : Serie de 27 notebooks (SC-0 a SC-15) couvrant blockchain, Solidity, verification formelle (SC-14), fuzz testing (SC-13), cryptographie (ZKP, HE)
-- **SymbolicAI/Planners/** : Planners-6 (Domains IPC dont Satellite), Planners-10 (LLM Planning), Planners-12 (Learning to Plan)
+- **Search/Applications/CSP/** : App-4 (Job-Shop Scheduling), App-8 (MiniZinc), App-11 (Picross), App-17 (VRP Logistics)
+- **Search/Applications/Hybrid/** : App-10 (Portfolio Optimization), App-13 (TSP Metaheuristics), App-17 (VRP avec SA, GA, ACO, CP-SAT)
+- **SymbolicAI/SmartContracts/** : Serie de 27 notebooks (SC-0 a SC-26) couvrant blockchain, Solidity, verification formelle (SC-14), fuzz testing (SC-13), cryptographie ZKP/HE (SC-15/16)
+- **SymbolicAI/Planners/** : Planners-1 a Planners-12 couvrant PDDL, Fast Downward, planification temporelle, HTN, LLM Planning
 - **SymbolicAI/Linq2Z3.ipynb** : Z3 SMT Solver en C#
 - **SymbolicAI/OR-tools-Stiegler.ipynb** : OR-Tools CP en C#
 - **Sudoku/** : 18 notebooks couvrant Sudoku avec multiples solveurs (Z3, CP-SAT, backtracking)
-- **GameTheory/** : 17 notebooks dont Gale-Shapley (Stable Marriage)
-- **Notebook Agentique** : pour la creation et finalisation automatisee de notebooks de projet
+- **GameTheory/** : 17+ notebooks couvrant Nash Equilibrium, Cooperative Games, Shapley Value, Mechanism Design
 - **Integration LLM** : function calling avec OpenAI/MCP pour assister la modelisation CP. Voir [Function Calling - OpenAI](https://platform.openai.com/docs/guides/function-calling) et [MCP Specification](https://modelcontextprotocol.io/)
 
 ---
 
-## 1. Probleme d'echange de reins (Kidney Exchange)
+## Index des Sujets
 
-### Description du probleme et contexte
-Le kidney exchange problem consiste a trouver des cycles de donneurs-receveurs incompatibles pour maximiser le nombre de transplantations. C'est un probleme de matching dans des graphes orientes avec contraintes de poids et de longueurs de cycles. Ce sujet est un classique de la RO avec un reel impact social. Les instances reelles viennent de programmes d'echange comme l'UNOS (USA) et le NAPRT (UK).
+### Categorie A : Sante, Social et Sciences du Vivant
 
-### References
-- Roth, Sonmez, Unver - *Kidney Exchange* - American Economic Review - 2007. [PDF](https://www.nber.org/system/files/working_papers/w10702/w10702.pdf)
-- Abraham, Blum, Sandholm - *Clearing Algorithms for Barter Exchange Markets* - EC 2007. [PDF](https://www.cs.cmu.edu/~sandholm/clearing.ec07.pdf)
-- [Wikipedia - Optimal kidney exchange problem](https://en.wikipedia.org/wiki/Optimal_kidney_exchange)
-- [jamestrimble/kidney_solver (GitHub)](https://github.com/jamestrimble/kidney_solver) - Implementation Python + Gurobi
+| # | Sujet | Difficulte |
+|---|-------|------------|
+| [A1](#a1---echange-de-reins-kidney-exchange) | Echange de reins (Kidney Exchange) | 3/5 |
+| [A2](#a2---planification-nutritionnelle-diet-problem) | Planification nutritionnelle (DIET Problem) | 2/5 |
+| [A3](#a3---ordonnancement-de-blocs-operatoires) | Ordonnancement de blocs operatoires | 3/5 |
+| [A4](#a4---optimisation-stochastique-de-protocoles-pharmaceutiques) | Optimisation stochastique de protocoles pharmaceutiques | 4/5 |
 
-### Point de depart
-```python
-# Modelisation CP-SAT : cycles dans un graphe oriente pondere
-from ortools.sat.python import cp_model
+### Categorie B : Production et Chaine Logistique
 
-# Variables : pour chaque paire (i,j), x[i][j] = 1 si i donne a j
-# Contrainte : chaque sommet a au plus un predecesseur et un successeur
-# Contrainte : cycles de longueur <= k (typiquement k=3)
-# Objectif : maximiser la somme des poids des aretes selectionnees
-```
+| # | Sujet | Difficulte |
+|---|-------|------------|
+| [B1](#b1---equilibrage-de-chaine-dassemblage-salbp) | Equilibrage de chaine d'assemblage (SALBP) | 3/5 |
+| [B2](#b2---conception-de-chaine-logistique-supply-chain-network-design) | Conception de chaine logistique (Supply Chain) | 3/5 |
+| [B3](#b3---chargement-de-conteneurs-bin-packing-3d) | Chargement de conteneurs (Bin Packing 3D) | 3/5 |
+| [B4](#b4---ordonnancement-industriel-rcpsp) | Ordonnancement industriel (RCPSP) | 3/5 |
 
-### Instances et donnees
-- [PrefLib - Kidney Exchange instances](https://www.preflib.org/dataset/Kidney)
-- [OPTN kidney paired donation data](https://optn.transplant.hrsa.gov/)
+### Categorie C : Mobilite et Tournees Vertes
 
-### Approches suggerees
-- Modelisation comme graphe oriente avec cycles disjoints
-- CP avec contraintes de circuit Hamiltonien limite
-- Programmation lineaire en nombres entiers
-- Algorithmes de clearing (approche iterative)
+| # | Sujet | Difficulte |
+|---|-------|------------|
+| [C1](#c1---tournees-de-livraison-vertes-electric-vrp) | Tournees de livraison vertes (Electric VRP) | 3/5 |
+| [C2](#c2---ordonnancement-ferroviaire-railway-timetabling) | Ordonnancement ferroviaire (Railway Timetabling) | 4/5 |
+| [C3](#c3---livraison-par-drones-drone-delivery-routing) | Livraison par drones (Drone Delivery Routing) | 3/5 |
+| [C4](#c4---optimisation-de-constellation-satellite) | Optimisation de constellation satellite | 4/5 |
 
-### Contenu CoursIA connexe
-- **GameTheory/** : Gale-Shapley (Stable Marriage) — base algorithmique pour le matching
-- **CSP-1-Fundamentals** : cryptarithmetique mentionnee comme exemple CSP
+### Categorie D : Cloud, Edge et Energie
 
-### Technologies pertinentes
-Python, OR-Tools CP-SAT, NetworkX, PuLP
+| # | Sujet | Difficulte |
+|---|-------|------------|
+| [D1](#d1---allocation-de-ressources-cloud-vm-scheduling) | Allocation de ressources cloud (VM Scheduling) | 3/5 |
+| [D2](#d2---optimisation-energetique-de-centres-de-donnees) | Optimisation energetique de centres de donnees | 3/5 |
+| [D3](#d3---placement-de-services-en-edge-computing) | Placement de services en edge computing | 3/5 |
+| [D4](#d4---dispatch-dans-un-reseau-electrique) | Dispatch dans un reseau electrique | 4/5 |
 
----
+### Categorie E : Blockchain et Cryptographie
 
-## 2. Equilibrage de chaine d'assemblage (Assembly Line Balancing)
+| # | Sujet | Difficulte |
+|---|-------|------------|
+| [E1](#e1---super-optimisation-gas-solidity-par-max-smt) | Super-optimisation gas Solidity par Max-SMT | 4/5 |
+| [E2](#e2---ordonnancement-mev-resistant-de-transactions) | Ordonnancement MEV-resistant de transactions | 3/5 |
+| [E3](#e3---synthese-de-circuits-zero-knowledge-sous-contraintes) | Synthese de circuits Zero-Knowledge sous contraintes | 4/5 |
+| [E4](#e4---allocation-de-validators-pos-par-bin-packing) | Allocation de validators PoS par bin-packing | 3/5 |
+| [E5](#e5---verification-formelle-smt-de-vulnerabilites-solidity) | Verification formelle SMT de vulnerabilites Solidity | 3/5 |
 
-### Description du probleme et contexte
-L'Assembly Line Balancing Problem (SALBP) vise a repartir les taches de production entre les stations de travail tout en respectant les contraintes de precedence et en minimisant le nombre de stations. C'est un probleme classique en gestion de production avec de nombreuses variantes (SALBP-1: minimiser stations pour un temps de cycle fixe, SALBP-2: minimiser temps de cycle pour un nombre de stations fixe).
+### Categorie F : SAT/SMT Industriel
 
-### References
-- [Hexaly - SALBP Benchmark Documentation](https://www.hexaly.com/documentation/advanced_examples/salbp.html)
-- Scholl and Becker - *State-of-the-art exact and heuristic solution procedures* - 2006. [PDF](https://publikationen.bibliothek.kit.edu/1000023755/894942)
-- [SALBP Benchmark instances (Scholl)](https://algorithmskeinprobleme.github.io/Assembly-Line-Balancing-Problem/)
-- [OR-Tools SALBP example](https://github.com/google/or-tools/blob/stable/examples/python/salbp.py) (si disponible)
+| # | Sujet | Difficulte |
+|---|-------|------------|
+| [F1](#f1---model-checking-hardware-par-sat-ic3pdr) | Model checking hardware par SAT (IC3/PDR) | 4/5 |
+| [F2](#f2---cryptanalyse-differentielle-par-sat) | Cryptanalyse differentielle par SAT | 4/5 |
+| [F3](#f3---bounded-model-checking-de-programmes-c) | Bounded Model Checking de programmes C | 3/5 |
+| [F4](#f4---compiler-fuzzing-par-generation-smt-dinputs) | Compiler fuzzing par generation SMT d'inputs | 4/5 |
+| [F5](#f5---verification-smt-de-reseaux-de-regulation-genetique) | Verification SMT de reseaux de regulation genetique | 3/5 |
 
-### Point de depart
-```python
-# Modelisation CP-SAT : assignation de taches a des stations
-from ortools.sat.python import cp_model
+### Categorie G : Planification sous Contrainte
 
-# Variables : station[t] = numero de station pour la tache t
-# Contraintes : precedence => station[t1] < station[t2]
-# Contraintes : temps total par station <= temps de cycle
-# Objectif : minimiser le nombre de stations utilisees
-```
+| # | Sujet | Difficulte |
+|---|-------|------------|
+| [G1](#g1---planification-temporelle-pddl-21--cp-hybride) | Planification temporelle PDDL 2.1 + CP hybride | 4/5 |
+| [G2](#g2---planification-htn-sous-contraintes) | Planification HTN sous contraintes | 4/5 |
+| [G3](#g3---coordination-de-drones-par-multi-agent-path-finding) | Coordination de drones par Multi-Agent Path Finding | 3/5 |
+| [G4](#g4---apprentissage-dheuristiques-pour-solveurs-cp) | Apprentissage d'heuristiques pour solveurs CP | 4/5 |
 
-### Instances et donnees
-- [SALBP-1 Benchmark (data files)](http://algorithmskeinprobleme.github.io/Assembly-Line-Balancing-Problem/instances.html)
-- [Assembly Line Balancing instances - PrefLib](https://www.preflib.org/)
+### Categorie H : Jeux, Art et Puzzles Avances
 
-### Approches suggerees
-- Modelisation CP avec precedence constraints
-- Minimisation du nombre de stations (SALBP-1)
-- Minimisation du temps de cycle (SALBP-2)
-- Variantes : U-lines, paralleles, mixed-model
+| # | Sujet | Difficulte |
+|---|-------|------------|
+| [H1](#h1---composition-musicale-assistee-par-contraintes) | Composition musicale assistee par contraintes | 3/5 |
+| [H2](#h2---generation-procedurale-de-niveaux-de-jeu) | Generation procedurale de niveaux de jeu (WFC) | 3/5 |
+| [H3](#h3---cryptanalyse-par-contraintes-ciphers-avances) | Cryptanalyse par contraintes (ciphers avances) | 3/5 |
+| [H4](#h4---covering-arrays-avec-contraintes-semantiques) | Covering Arrays avec contraintes semantiques | 3/5 |
 
-### Contenu CoursIA connexe
-- **CSP-4-Scheduling** : IntervalVar, NoOverlap, Cumulative — primitives CP-SAT directement applicables
-- **CSP-5-Optimization** : Bin Packing, Knapsack — problemes d'optimisation similaires
+### Categorie I : LLM + CSP Hybride
 
-### Technologies pertinentes
-Python, OR-Tools CP-SAT, Hexaly
+| # | Sujet | Difficulte |
+|---|-------|------------|
+| [I1](#i1---assistant-de-planification-conversationnel-llm--csp) | Assistant de planification conversationnel (LLM + CSP) | 3/5 |
+| [I2](#i2---explicateur-de-solutions-cp-par-llm) | Explicateur de solutions CP par LLM | 3/5 |
+| [I3](#i3---modelisation-cp-assistee-par-llm) | Modelisation CP assistee par LLM | 4/5 |
 
----
+### Categorie J : RH, Matching et Mechanism Design
 
-## 3. Conception de chaine logistique (Supply Chain Network Design)
+| # | Sujet | Difficulte |
+|---|-------|------------|
+| [J1](#j1---allocation-multicritere-de-candidats) | Allocation multicritere de candidats | 3/5 |
+| [J2](#j2---enchere-combinatoire-et-winner-determination) | Enchere combinatoire et Winner Determination | 4/5 |
+| [J3](#j3---allocation-de-ressources-par-mecanisme-incitatif) | Allocation de ressources par mecanisme incitatif | 4/5 |
 
-### Description du probleme et contexte
-La conception de reseau logistique implique de localiser les installations (usines, entrepots) et de determiner les flux de marchandises pour minimiser les couts tout en satisfaisant la demande. C'est un probleme de localisation-allocation avec contraintes de capacite. Applications : logistique e-commerce, distribution pharmaceutique, aide humanitaire.
+### Categorie K : Urbanisme, Environnement et Multi-criteres
 
-### References
-- Ozgur and Polat - *Supply Chain Network Design* - 2016
-- Sabharwal et al. - *Formulating Fixed-Charge Network Design* - 2023
-- Dotoli et al. - *Multi-Objective Optimization* - 2005
-- [OR-Tools Facility Location example](https://developers.google.com/optimization/cp/cp_solver)
+| # | Sujet | Difficulte |
+|---|-------|------------|
+| [K1](#k1---planification-urbaine-et-placement-dinfrastructures) | Planification urbaine et placement d'infrastructures | 3/5 |
+| [K2](#k2---allocation-de-frequences-radio) | Allocation de frequences radio | 3/5 |
+| [K3](#k3---optimisation-multiobjectif-sous-contraintes) | Optimisation multiobjectif sous contraintes | 4/5 |
 
-### Point de depart
-```python
-# Modelisation CP-SAT : localisation-allocation
-# Variables : open[w] = 1 si l'entrepot w est ouvert
-#            flow[w,c] = quantite envoyee de w au client c
-# Contraintes : capacite des entrepots, couverture de la demande
-# Objectif : minimiser couts fixes (ouverture) + couts variables (transport)
-```
+### Categorie L : Competitions et Benchmarks
 
-### Instances et donnees
-- [Supply Chain Network Design instances](https://github.com/dscommunity-iitd/Simulated-Annealing-for-Supply-Chain-Network-Design)
-- [Capacitated Facility Location Problem instances](https://miplib.zib.de/instance_details_capacitated-facility-location.html)
-
-### Approches suggerees
-- Modelisation p-median et p-center avec CP
-- Contraintes de capacite et de service
-- Multi-objectifs : cout vs robustesse vs emissions
-- Analyse de sensibilite et scenarios
-
-### Contenu CoursIA connexe
-- **Search-9-LinearProgramming** : references l'optimisation logistique et les supply chains
-- **CSP-5-Optimization** : Bin Packing, Knapsack — techniques d'allocation optimales
-- **CSP-9-Distributed** : mentionne les supply chains en contexte DisCSP
-- *Note* : un notebook `Search-App-8-SupplyChain.ipynb` est reference dans Search-9 mais n'existe pas encore — ce sujet serait un bon candidat pour le creer.
-
-### Technologies pertinentes
-Python, OR-Tools CP-SAT, PuLP, GeoPandas
+| # | Sujet | Difficulte |
+|---|-------|------------|
+| [L1](#l1---participation-a-une-competition-cpsatsmt) | Participation a une competition CP/SAT/SMT | Variable |
 
 ---
 
-## 4. Composition musicale assistee par contraintes
+## A1 - Echange de reins (Kidney Exchange)
 
-### Description du probleme et contexte
-La composition musicale peut etre formulee comme un probleme de satisfaction de contraintes : harmonie, rythme, contrepoint, structure. La CP permet de generer des pieces musicales respectant des criteres esthetiques et theoriques. C'est un sujet original qui combine art et optimisation combinatoire.
+Le Kidney Exchange Problem (KEP) consiste a trouver des cycles d'echanges de reins entre des paires patient-donneur incompatibles, de maniere a maximiser le nombre de transplantations realisables. Ce probleme, issu de la recherche operationnelle appliquee a la sante, se modelise naturellement comme un probleme de couverture par cycles disjoints dans un graphe oriente value. Les contraintes portent sur la compatibilite immunologique, la taille maximale des cycles (limitee par des considerations logistiques), et l'equite dans l'allocation. C'est un sujet ideal pour explorer la programmation par contraintes appliquee a un probleme concret a fort impact social.
 
-### References
-- Anders - *Constraint Programming for Music Composition* - Wiley 2012. [Extrait](https://www.michael-anders.net/)
-- [IJCAI 2024 Tutorial on CP for Music](https://ijcai-24.org/)
-- Pachet and Roy - *FlowComposer* - 2014. [PDF](https://www.researchgate.net/publication/263148474_Flow_Composer_Harmonic_Generation_Guided_by_Tension-FLOW_Model)
-- Truchet and Assayag - *OpenMusic* - 2016. [Site](https://openmusic-project.github.io/)
+### Objectifs
+- Modeliser le KEP comme un probleme de recherche de cycles disjoints dans un graphe oriente avec CP-SAT
+- Implementer les contraintes de compatibilite immunologique (sang, tissu, anticorps) et de taille de cycle
+- Comparer les performances de CP-SAT avec une approche PLNE et une heuristique gloutonne
+- Etendre le modele pour inclure des chaines altruistes (chains initiated by non-directed donors)
+- Evaluer sur des instances reelles du dataset UNOS ou des benchmarks synthetiques
 
-### Point de depart
-```python
-# Modelisation CP : generation d'une melodie sur 8 mesures
-# Variables : note[m, b] = hauteur (MIDI) de la note a mesure m, beat b
-# Contraintes : intervals melodiques, progression harmonique, resolution
-# Contraintes : registre (pas trop grave, pas trop aigu)
-# Integration : export vers MIDI via midiutil ou pretty_midi
-```
+### Notebooks CoursIA pertinents
 
-### Ressources supplementaires
-- [music21 - toolkit for musicology](https://web.mit.edu/music21/) - Manipulation de partitions en Python
-- [MIDIUtil](https://github.com/MarkCWirt/MIDIUtil) - Generation de fichiers MIDI
-- [pretty_midi](https://github.com/craffel/pretty-midi) - Analyse et generation MIDI
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation CSP de base |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Knapsack, allocation sous contraintes |
+| GameTheory - Cooperative | [GameTheory/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/GameTheory) | Shapley Value, allocation equitable |
+| Search-1 StateSpace | [Search/Part1-Foundations/Search-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-1.ipynb) | Graphes d'etat, parcours |
 
-### Approches suggerees
-- Modelisation CP avec contraintes d'harmonie (accords, voix)
-- Generation melodique avec contour et intervalles
-- Integration avec MIDI et synthesis audio
-- Interactive constraint programming (generation en temps reel)
+### References externes
+- Abraham, D.J., Blum, A., & Sandholm, T. (2007). "Clearing Algorithms for Barter Exchange Markets: Enabling Nationwide Kidney Exchanges." *EC'07*. [ACM DL](https://dl.acm.org/doi/10.1145/1250910.1250933)
+- Dickerson, J.P., Manlove, D.F., et al. (2016). "Weighted Matching in Large-Scale Kidney Exchange." *AAAI*. [AAAI](https://ojs.aaai.org/index.php/AAAI/article/view/10324)
+- UNOS Kidney Paired Donation Program. [unos.org](https://unos.org/transplant/kidney-paired-donation/)
+- Mak-Hau, V. (2017). "On the Kidney Exchange Problem: Tighter IP Formulations." *European Journal of Operational Research*. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0377221717305760)
+- CSPLib Problem 047: Kidney Exchange. [csplib.org](https://www.csplib.org/Problems/prob047/)
 
-### Contenu CoursIA connexe
-- *Aucun contenu CoursIA specifique a la musique* — ce sujet est une application entierement nouvelle des primitives CSP. La modelisation harmonique/rythmique est originale.
-
-### Technologies pertinentes
-Python, OR-Tools CP-SAT, music21, MIDIUtil
+### Difficulte : 3/5
 
 ---
 
-## 5. Assistant de planification conversationnel (LLM + CSP)
+## A2 - Planification nutritionnelle (DIET Problem)
 
-### Description du probleme et contexte
-Un assistant de planification conversationnel combine un LLM pour l'interaction en langage naturel et un solveur CP pour la resolution des contraintes. Le LLM extrait les preferences, le solveur trouve des solutions, le LLM explique et itere. Pipeline : LLM -> extraction -> CP -> LLM -> feedback. Ce sujet est ideal pour integrer des competences en IA generative et en optimisation.
+Le Diet Problem est un classique de la recherche operationnelle : determiner la combinaison d'aliments la moins coutee satisfaisant l'ensemble des besoins nutritionnels journaliers. Modelisable comme un programme lineaire en nombres entiers (Knapsack multi-dimensionnel), il se prete remarquablement a une modelisation CP-SAT avec des contraintes sur les calories, proteines, lipides, glucides, vitamines et mineraux. Le sujet s'etend naturellement vers la generation de menus hebdomadaires equilibres en ajoutant des contraintes de variete (ne pas manger le meme plat deux jours de suite), de saisonnalite, de budget, et de preferences alimentaires.
 
-### References
-- [OpenAI Function Calling Documentation](https://platform.openai.com/docs/guides/function-calling)
-- [Soon.works - LLM-assisted Constraint Programming](https://www.soon.works/blog/why-chatgpt-and-llms-arent-ideal-for-automatically-generating-shift-schedules) - 2023
-- Xu et al. - *Conversational Planning* - 2023
-- [MCP (Model Context Protocol) Specification](https://modelcontextprotocol.io/)
+### Objectifs
+- Modeliser le Diet Problem comme un knapsack multi-dimensionnel avec CP-SAT (variables binaires par aliment, contraintes nutritionnelles)
+- Etendre le modele en planification de menus hebdomadaires avec contraintes de variete, budget et saisonnalite
+- Integrer des preferences utilisateur comme soft constraints avec penalites ponderees
+- Benchmarker sur les donnees USDA FoodData Central et les apports nutritionnels OMS/ANSES
+- Comparer l'approche CP-SAT avec une resolution PLNE classique (OR-Tools linear solver)
 
-### Point de depart
-```python
-# Architecture MCP : le solveur CP est expose comme un outil MCP
-# Le LLM appelle l'outil avec les contraintes extraites du dialogue
-# Exemple : "Organise une reunion cette semaine avec 5 personnes"
-#   -> LLM extrait : participants, contraintes de disponibilite
-#   -> CP solveur : trouve un creneau compatible
-#   -> LLM : presente la solution en langage naturel
+### Notebooks CoursIA pertinents
 
-# Voir le notebook agentique du cours pour un exemple d'integration
-```
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Knapsack, Bin Packing, optimisation |
+| CSP-7 Soft Constraints | [Search/Part2-CSP/CSP-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-7.ipynb) | Penalites, preferences, compromis |
+| Search-9 Programmation lineaire | [Search/Part1-Foundations/Search-9.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-9.ipynb) | PLNE, simplex, dualite |
+| App-10 Portfolio Optimization | [Search/Applications/Hybrid/App-10.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/Hybrid/App-10.ipynb) | Optimisation sous contraintes de budget |
 
-### Ressources supplementaires
-- [MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk)
-- [LangChain Tools documentation](https://python.langchain.com/docs/modules/tools/)
-- [FastAPI pour le backend](https://fastapi.tiangolo.com/)
+### References externes
+- Stigler, G.J. (1945). "The Cost of Subsistence." *Journal of Farm Economics*, 27(2), 303-314. [JSTOR](https://www.jstor.org/stable/1231810)
+- USDA FoodData Central. [fdc.nal.usda.gov](https://fdc.nal.usda.gov/)
+- ANSES - Apports nutritionnels conseilles. [anses.fr](https://www.anses.fr/en/content/nutrition)
+- Briend, A., et al. (2020). "Modelling the Cost of a Diet: A Review." *Public Health Nutrition*. [Cambridge Core](https://www.cambridge.org/core/journals/public-health-nutrition)
+- OR-Tools Linear Solver Example: Diet Problem. [Google Developers](https://developers.google.com/optimization/lp/glop)
 
-### Approches suggerees
-- Integration via MCP ou function calling
-- Cas d'usage : voyage, repas, evenements, reunions
-- Definition d'un schema de contraintes structure
-- Interface web (Streamlit ou Flask)
-
-### Contenu CoursIA connexe
-- **CSP-6-Hybridation** : couvre explicitement "LLM + CSP pour la modelisation" — fondation directe
-- **Planners-10-LLM-Planning** : LLMs pour la planification, prompting, plan repair
-- **Planners-12-LOOP** : Learning to Plan, modeles neuronaux pour les heuristiques
-- *Ce sujet combine naturellement deux axes deja enseignes separement dans CoursIA.*
-
-### Technologies pertinentes
-Python, OR-Tools CP-SAT, OpenAI API/LM Studio, FastAPI, Streamlit
+### Difficulte : 2/5
 
 ---
 
-## 6. Planification urbaine et placement d'infrastructures
+## A3 - Ordonnancement de blocs operatoires
 
-### Description du probleme et contexte
-La planification urbaine implique de localiser des infrastructures (ecoles, hopitaux, transports) pour maximiser l'accessibilite tout en minimisant les couts. Les contraintes incluent la capacite, la distance, et les preferences des residents. C'est une application de la theorie de la localisation (p-median, p-center, MCLP).
+L'ordonnancement des blocs operatoires est un probleme de scheduling complexe ou il faut planifier des interventions chirurgicales dans des salles d'operation partagees, sous des contraintes de disponibilite des chirurgiens, des anesthesistes, des equipements specifiques, et des durees estimees variables. Le modele CP-SAT utilise des IntervalVar pour representer chaque intervention, des contraintes NoOverlap pour les salles, et des contraintes Cumulative pour le personnel. L'objectif est de minimiser le makespan tout en respectant les urgences, les preferences des equipes, et les temps de nettoyage entre interventions.
 
-### References
-- Chabrier - *Facility Location Problems* - 2006
-- [CACIC 2017 - Urban Planning with CP](https://www.sciencedirect.com/science/article/pii/S1877050917328424)
-- [IBM CP Optimizer Urban Planning Examples](https://www.ibm.com/docs/en/icos/20.1.0?topic=examples-facility-location-problems)
-- [OSMnx - Python for street networks](https://osmnx.readthedocs.io/)
+### Objectifs
+- Modeliser le bloc operatoire comme un job-shop avec ressources cumulatives (chirurgiens, salles, equipements) via IntervalVar et Cumulative
+- Implementer les contraintes de precedence (urgence avant elective), disponibilite du personnel, et temps de nettoyage
+- Ajouter des soft constraints pour les preferences des chirurgiens et la minimisation des temps d'attente des patients
+- Evaluer sur des instances de la litterature (Owstream benchmarks, donnees hospitalieres synthetiques)
+- Comparer avec une approche par regles de priorite et une metaheuristique (simulated annealing)
 
-### Point de depart
-```python
-# Modelisation p-median : localiser p installations pour minimiser la distance totale
-# Variables : open[i] = 1 si installation a i, assign[j] = installation desservant j
-# Contraintes : exactement p installations ouvertes, couverture de chaque client
-# Objectif : minimiser la somme des distances
+### Notebooks CoursIA pertinents
 
-# Extension : integration donnees reelles via OSMnx (OpenStreetMap)
-import osmnx as ox
-G = ox.graph_from_place("Paris, France", network_type="drive")
-```
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4.ipynb) | IntervalVar, NoOverlap, Cumulative |
+| CSP-7 Soft Constraints | [Search/Part2-CSP/CSP-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-7.ipynb) | Penalites, preferences |
+| App-4 Job-Shop Scheduling | [Search/Applications/CSP/App-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/CSP/App-4.ipynb) | Job-shop CP-SAT |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Optimisation multi-objectif |
 
-### Instances et donnees
-- [OSMnx pour les donnees geospatiales](https://github.com/gboeing/osmnx)
-- [GeoPandas pour la manipulation de donnees spatiales](https://geopandas.org/)
-- [p-median benchmark instances](https://github.com/McGill-Comp421/p-median)
+### References externes
+- Cardoen, B., Demeulemeester, E., & Belien, J. (2010). "Operating Room Planning and Scheduling: A Literature Review." *European Journal of Operational Research*, 201(3), 921-932. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0377221709003070)
+- Guerriero, F., & Guido, R. (2016). "Operational Research in the Management of the Operating Theatre: A Survey." *Health Care Management Science*, 19, 89-114. [Springer](https://link.springer.com/article/10.1007/s10729-014-9290-2)
+- OR-Tools Scheduling Example. [Google Developers](https://developers.google.com/optimization/scheduling/job_shop)
+- van Oostrum, J.M., et al. (2008). "Surgical Planning in Hospitals." *Health Systems*, 1(1), 35-50. [Tandfonline](https://www.tandfonline.com/doi/abs/10.1057/palgrave.hs.2006.2)
 
-### Approches suggerees
-- Modelisation p-median et p-center
-- Contraintes de capacite et de couverture
-- Multi-objectifs : accessibilite vs cout vs equite
-- Integration avec donnees geospatiales (OpenStreetMap)
-
-### Contenu CoursIA connexe
-- *Aucun contenu CoursIA specifique a la planification urbaine* — le sujet s'appuie sur les primitives generales d'optimisation (CSP-4, CSP-5) appliquees a un domaine nouveau.
-
-### Technologies pertinentes
-Python, OR-Tools CP-SAT, GeoPandas, OSMnx
+### Difficulte : 3/5
 
 ---
 
-## 7. Tournees de livraison vertes (Electric VRP)
+## A4 - Optimisation stochastique de protocoles pharmaceutiques
 
-### Description du probleme et contexte
-Le Electric VRP etend le VRP classique avec des vehicules electriques ayant des contraintes d'autonomie et des besoins de recharge. L'objectif est de minimiser les emissions et le cout energetique tout en satisfaisant la demande des clients. C'est un probleme d'actualite avec la transition ecologique de la logistique.
+L'optimisation des protocoles de traitement pharmaceutique (en particulier en oncologie) consiste a determiner les dosages et calendriers d'administration de medicaments qui maximisent l'efficacite therapeutique tout en minimisant les effets secondaires toxiques. Ce probleme comporte une forte composante stochastique (variabilite inter-patient, incertitude sur la reponse) qui peut etre apprehendee par des modeles CP robustes ou stochastiques. La modelisation CP permet de capturer les contraintes de dose cumulative maximale, les intervalles minimum entre administrations, et les interactions medicamenteuses.
 
-### References
-- Booth and Beck - *Electric VRP with CP* - 2018. [PDF](https://www.researchgate.net/publication/333231312_A_Constraint_Programming_Approach_to_Electric_Vehicle_Routing_with_Time_Windows)
-- Shaw - *VRP with Constraint Programming* - 1998
-- [OR-Tools Routing Documentation](https://developers.google.com/optimization/routing)
-- [PyVRP Documentation](https://pyvrp.readthedocs.io/)
+### Objectifs
+- Modeliser un protocole de chimiotherapie comme un probleme de scheduling sous contraintes de dose, toxicite et intervalle avec CP-SAT
+- Integrer l'incertitude sur la reponse patient via des scenarios stochastiques ou de l'optimisation robuste
+- Implementer les contraintes pharmacocinetiques (demi-vie, concentration maximale, accumulation)
+- Comparer les approches deterministe, robuste et stochastique sur des profils de patients synthetiques
+- Visualiser les protocoles optimaux et les zones de risque (toxicite vs efficacite)
 
-### Point de depart
-```python
-# Modelisation CP : VRP avec contraintes d'energie
-# Variables : next[v,i] = prochain client apres i pour vehicule v
-#            energy[v,i] = niveau d'energie du vehicule v au client i
-# Contraintes : autonomie (energy >= 0), recharge aux stations
-# Objectif : minimiser distance + temps de recharge
+### Notebooks CoursIA pertinents
 
-# Alternative : OR-Tools Routing (API de haut niveau)
-from ortools.constraint_solver import routing_enums_pb2, pywrapcp
-```
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4.ipynb) | IntervalVar, contraintes temporelles |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Optimisation sous contraintes |
+| Search-11 Metaheuristiques | [Search/Part1-Foundations/Search-11.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-11.ipynb) | Optimisation stochastique |
+| Probas/ (Infer.NET) | [Probas/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Probas) | Programmation probabiliste |
 
-### Instances et donnees
-- [EVRPTW instances (Booth et al.)](https://github.com/boothj/EVRPTW)
-- [PyVRP benchmark instances](https://github.com/PyVRP/PyVRP/tree/main/data)
-- [Solomon VRPTW instances](https://www.sintef.no/projectweb/top/vrptw/solomon-benchmark/)
+### References externes
+- Agur, Z., et al. (2006). "Effect of Dosing Interval on Myelotoxicity and Survival in Computerized Controlled Clinical Trials of 1-beta-D-Arabinofuranosylcytosine." *Cell Proliferation*, 29(6), 359-374. [Wiley](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1365-2184.1996.tb00984.x)
+- Fiandaca, G., et al. (2022). "Mathematical Models in Oncology: A Comprehensive Review." *Cancers*, 14(17), 4101. [MDPI](https://www.mdpi.com/2072-6694/14/17/4101)
+- Bertsimas, D., et al. (2016). "Data-Driven Optimization in Cancer Treatment." *INFORMS Journal on Computing*. [INFORMS](https://pubsonline.informs.org/doi/10.1287/ijoc.2016.0687)
+- OR-Tools CP-SAT Documentation: Interval Variables. [Google Developers](https://developers.google.com/optimization/cp/cp_solver#interval_variables)
 
-### Approches suggerees
-- Modelisation CP avec contraintes d'energie
-- Stations de recharge : localisation et scheduling
-- Optimisation multi-objectifs (distance + energie)
-- Scenario avec flotte mixte (electrique + thermique)
-
-### Contenu CoursIA connexe
-- **App-17-VRP-Logistics** : couvre le VRP classique avec SA, GA, ACO, CP-SAT — fondation directe. Le projet ajoute les contraintes electriques (batterie, stations de recharge).
-- **CSP-5-Optimization** : techniques d'optimisation pour les variantes VRP
-
-### Technologies pertinentes
-Python, OR-Tools Routing, PyVRP, NetworkX
+### Difficulte : 4/5
 
 ---
 
-## 8. Allocation de ressources cloud (VM Scheduling)
+## B1 - Equilibrage de chaine d'assemblage (SALBP)
 
-### Description du probleme et contexte
-Le placement de machines virtuelles (VM) sur des serveurs physiques vise a optimiser l'utilisation des ressources (CPU, RAM) tout en respectant les contraintes de capacite et de localisation. C'est un probleme de bin packing avec contraintes d'affinite et de securite. Applications : optimisation de couts AWS/GCP/Azure, consolidation de serveurs.
+Le Simple Assembly Line Balancing Problem (SALBP) consiste a repartir un ensemble de taches elementaires sur les stations d'une ligne d'assemblage, en respectant les contraintes de precedence entre taches et la cadence imposee (cycle time). L'objectif est de minimiser le nombre de stations (SALBP-1) ou le temps de cycle (SALBP-2). C'est un probleme classique de CP ou chaque tache est assignee a une station avec des contraintes de precedence et de temps cumule par station. Le modele CP-SAT est direct et performant, avec des applications industrielles dans l'automobile, l'electronique et l'agroalimentaire.
 
-### References
-- Zhang - *VM Resource Allocation with CP* - VCRA-CP. [PDF](https://arxiv.org/abs/1810.04465)
-- Van et al. - *VM Selection as CSP*
-- [Google OR-Tools Bin Packing example](https://developers.google.com/optimization/pack/bin_packing)
+### Objectifs
+- Modeliser le SALBP-1 (minimiser les stations) et SALBP-2 (minimiser le cycle time) en CP-SAT
+- Implementer les contraintes de precedence, de temps de cycle, et d'exclusion mutuelle entre taches
+- Etendre aux variantes multi-modeles (mixing plusieurs produits sur la meme ligne) et multi-objectifs
+- Benchmarker sur les instances de la litterature (Otto et al., 2013) disponibles en ligne
+- Comparer CP-SAT avec une heuristique de priorite (Ranked Positional Weight) et un modele PLNE
 
-### Point de depart
-```python
-# Modelisation CP-SAT : bin packing avec contraintes
-# Variables : bin[v] = serveur physique pour la VM v
-# Contraintes : capacite CPU/RAM par serveur, affinite/anti-affinite
-# Objectif : minimiser le nombre de serveurs actifs (consolidation)
+### Notebooks CoursIA pertinents
 
-from ortools.sat.python import cp_model
-# Voir aussi : OR-Tools bin_packing example
-```
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4.ipynb) | IntervalVar, NoOverlap, scheduling |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Bin Packing, optimisation |
+| App-4 Job-Shop Scheduling | [Search/Applications/CSP/App-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/CSP/App-4.ipynb) | Job-shop, affectation de taches |
+| Search-1 StateSpace | [Search/Part1-Foundations/Search-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-1.ipynb) | Graphes, parcours |
 
-### Instances et donnees
-- [VM scheduling instances - Azure public dataset](https://github.com/Azure/AzurePublicDataset)
-- [Google Cluster Trace](https://github.com/google/cluster-data)
-- [Bin Packing instances - CSPLib](https://www.csplib.org/Problems/prob054/)
+### References externes
+- Scholl, A. (1999). "Balancing and Sequencing of Assembly Lines." *Physica-Verlag*. [Springer](https://link.springer.com/book/10.1007/978-3-642-58355-8)
+- Otto, A., Otto, C., & Scholl, A. (2013). "Systematic Data Generation and Test Design for Computational Experiments with SALBP Instances." *European Journal of Operational Research*, 228(1), 33-45. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0377221713000757)
+- SALBP Benchmark Instances (Assembly-Line-Balancing.de). [ALB](https://assembly-line-balancing.de/)
+- Boysen, N., Fliedner, M., & Scholl, A. (2007). "A Classification of Assembly Line Balancing Problems." *European Journal of Operational Research*, 183(2), 674-693. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0377221707005739)
 
-### Approches suggerees
-- Modelisation bin packing avec CP
-- Contraintes de capacite et d'affinite
-- Minimisation du nombre de serveurs actifs
-- Dynamic allocation et migration
-
-### Contenu CoursIA connexe
-- **CSP-4-Scheduling** : JSSP, RCPSP, IntervalVar, NoOverlap, Cumulative — primitives CP-SAT directement applicables au placement de VMs
-- **App-4-JobShopScheduling** : ordonnancement industriel avec intervalles, precedences, makespan
-
-### Technologies pertinentes
-Python, OR-Tools CP-SAT, PuLP
+### Difficulte : 3/5
 
 ---
 
-## 9. Planification de trajectoire robotique sous contraintes
+## B2 - Conception de chaine logistique (Supply Chain Network Design)
 
-### Description du probleme et contexte
-La planification de trajectoire (path planning) pour robots mobiles implique de trouver un chemin executable en respectant les contraintes cinematiques et dynamiques. Les environnements dynamiques ajoutent de la complexite. C'est un sujet au croisement de la CP et de la robotique.
+Le Supply Chain Network Design consiste a determiner l'emplacement optimal d'entrepots et de centres de distribution, les flux de marchandises entre fournisseurs, entrepots et clients, sous des contraintes de capacite, de demande, et de couts de transport. C'est un probleme de localisation-allocation qui se decompose en un probleme de p-median/p-center pour la localisation, et un probleme de flot pour l'allocation. La modelisation CP-SAT permet de capturer les contraintes discretes (ouvrir/fermer un entrepot), les capacites, et les choix multimodaux de transport.
 
-### References
-- Wang et al. - *Multi-Robot Path Planning Survey* - AAMAS 2019. [PDF](https://www.aaai.org/ojs/index.php/AIIDE/article/view/5143)
-- Lopez et al. - *Robot Motion Planning* - ICAPS 2012
-- [Shapely - geometric manipulation](https://shapely.readthedocs.io/)
+### Objectifs
+- Modeliser le Supply Chain Network Design comme un probleme de localisation-allocation avec CP-SAT
+- Implementer les contraintes de capacite d'entrepots, demande client, et couts de transport variables
+- Ajouter des contraintes de robustesse (demande incertaine) et de durabilite (emissions CO2, camions electriques)
+- Evaluer sur des instances reelles (CAP - Capacitated Plant Location) et des benchmarks synthetiques
+- Comparer avec une resolution PLNE et une metaheuristique (GRASP ou ALNS)
 
-### Point de depart
-```python
-# Modelisation CSP : discretisation espace-temps
-# Variables : pos[t] = (x, y) du robot au temps t
-# Contraintes : obstacles (pos[t] not in obstacles),
-#               cinematique (||pos[t+1] - pos[t]|| <= max_speed)
-# Objectif : minimiser le temps d'arrivee
+### Notebooks CoursIA pertinents
 
-import shapely.geometry as geom
-# Voir aussi : A* comme base de comparaison
-```
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Knapsack, Bin Packing, allocation |
+| CSP-9 Distributed CSP | [Search/Part2-CSP/CSP-9.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-9.ipynb) | Multi-agent, supply chains |
+| App-17 VRP Logistics | [Search/Applications/CSP/App-17.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/CSP/App-17.ipynb) | VRP, logistique |
+| Search-9 Programmation lineaire | [Search/Part1-Foundations/Search-9.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-9.ipynb) | PLNE, localisation |
 
-### Ressources supplementaires
-- [ROS (Robot Operating System)](https://www.ros.org/) - Framework robotique
-- [Navigation2 Stack](https://navigation.ros.org/) - Navigation autonome
-- [Open Motion Planning Library (OMPL)](https://ompl.kavrakilab.org/)
+### References externes
+- Melo, M.T., Nickel, S., & Saldanha-da-Gama, F. (2009). "Facility Location and Supply Chain Management - A Literature Review." *European Journal of Operational Research*, 196(2), 401-412. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0377221708003614)
+- Daskin, M.S. (2013). "Network and Discrete Location: Models, Algorithms, and Applications." *Wiley*. [Wiley](https://www.wiley.com/en-us/Network+and+Discrete+Location%3A+Models%2C+Algorithms%2C+and+Applications%2C+2nd+Edition-p-9780470905364)
+- Beasley OR-Library: Capacitated Plant Location. [Brunel](http://people.brunel.ac.uk/~mastjjb/jeb/orlib/capinfo.html)
+- Farahani, R.Z., et al. (2014). "Competitive Supply Chain Network Design: An Overview." *Computers & Operations Research*, 42, 328-346. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0305054813002105)
 
-### Approches suggerees
-- Modelisation CSP avec discretisation espace-temps
-- Contraintes de collision et de cinematique
-- Integration avec A* et RRT
-- Application : robots mobiles, bras robotiques
-
-### Contenu CoursIA connexe
-- **Search-1-StateSpace** : problemes de robotique et pathfinding mentionnes
-- **Search-3-Informed** : A*, heuristiques — directement applicables
-- **Planners-6-Domains** : domaines IPC dont Gripper (robotique)
-
-### Technologies pertinentes
-Python, OR-Tools CP-SAT, Shapely, ROS
+### Difficulte : 3/5
 
 ---
 
-## 10. Verification de contrats intelligents (blockchain) par contraintes
+## B3 - Chargement de conteneurs (Bin Packing 3D)
 
-### Description du probleme et contexte
-La verification formelle de smart contracts (Ethereum) utilise SMT solvers comme Z3 pour detecter les vulnerabilites (re-entrancy, overflow, access control). La modelisation des contraintes d'execution permet une analyse statique rigoureuse. C'est un sujet en forte demande dans l'industrie blockchain.
+Le Bin Packing 3D consiste a optimiser le chargement d'un ensemble d'objets parallelepipediques dans un nombre minimal de conteneurs (ou camions), en respectant les contraintes geometriques de non-chevauchement, d'orientation (certains objets ne peuvent etre tournes), de fragilite (ne pas poser d'objet lourd sur un objet fragile), et de stabilite (le centre de gravite doit rester dans une zone acceptable). C'est une extension 3D du Bin Packing classique, avec des contraintes geometriques qui rendent le modele CP-SAT riche et interessant.
 
-### References
-- Luu et al. - *Oyente* - CCS 2016. [PDF](https://eprint.iacr.org/2015/404.pdf)
-- [Solidity SMTChecker Documentation](https://docs.soliditylang.org/en/latest/smtchecker.html)
-- Zellic - *WETH Audit* - 2020
-- [Mythril - symbolic execution for smart contracts](https://github.com/Consensys/mythril)
+### Objectifs
+- Modeliser le Bin Packing 3D en CP-SAT avec des variables de position (x, y, z) et de dimension pour chaque objet
+- Implementer les contraintes de non-chevauchement 3D, d'orientation, de fragilite et de stabilite
+- Ajouter des contraintes de poids maximal par conteneur et de centre de gravite
+- Benchmarker sur les instances de Martello et Vigo (2000) et les benchmarks PACKLIB
+- Comparer avec des heuristiques de placement (Bottom-Left-Fill, Maximal Rectangles)
 
-### Point de depart
-```python
-# Modelisation SMT avec Z3
-from z3 import *
+### Notebooks CoursIA pertinents
 
-# Variables : mapping des variables d'etat du contrat
-balance = Int('balance')
-amount = Int('amount')
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Bin Packing, Knapsack |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation CSP |
+| App-10 Portfolio | [Search/Applications/Hybrid/App-10.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/Hybrid/App-10.ipynb) | Optimisation combinatoire |
+| Search-4 Local Search | [Search/Part1-Foundations/Search-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-4.ipynb) | Heuristiques locales |
 
-# Contraintes : invariants du contrat
-solver = Solver()
-solver.add(balance >= 0)
-solver.add(amount >= 0)
-solver.add(amount <= balance)  # precondition de transfert
+### References externes
+- Martello, S., Pisinger, D., & Vigo, D. (2000). "The Three-Dimensional Bin Packing Problem." *Operations Research*, 48(2), 256-267. [INFORMS](https://pubsonline.informs.org/doi/abs/10.1287/opre.48.2.256.12386)
+- Crainic, T.G., Perboli, G., & Tadei, R. (2008). "Extreme Point-Based Heuristics for Three-Dimensional Bin Packing." *INFORMS Journal on Computing*, 20(3), 368-384. [INFORMS](https://pubsonline.informs.org/doi/10.1287/ijoc.1070.0248)
+- PACKLIB: 3D Packing Benchmarks. [OR-Library](http://people.brunel.ac.uk/~mastjjb/jeb/orlib/binpackinfo.html)
+- Zhao, X., et al. (2021). "A Survey on Three-Dimensional Container Loading." *European Journal of Operational Research*. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0377221721007165)
 
-# Verification : trouver un contre-exemple (vulnerabilite)
-```
-
-### Ressources supplementaires
-- [Ethereum Smart Contract Best Practices](https://consensys.github.io/smart-contract-best-practices/)
-- [Slither - static analyzer for Solidity](https://github.com/crytic/slither)
-- [Hardhat - development framework](https://hardhat.org/)
-
-### Approches suggerees
-- Modelisation SMT avec Z3
-- Detection de re-entrancy, integer overflow, access control
-- Symbolic execution des smart contracts
-- Integration avec outils de dev (Hardhat, Foundry)
-
-### Contenu CoursIA connexe
-- **SmartContracts/SC-14-Formal-Verification** : verification formelle avec SMTChecker, Act — fondation directe
-- **SmartContracts/SC-13-Fuzz-Invariants** : fuzz testing, invariants
-- **SmartContracts/SC-0-Cypherpunk-Origins** : Hash, Merkle, PoW, signatures
-- *La serie SmartContracts (27 notebooks) couvre extensivement la verification de smart contracts. Le projet approfondit avec SMT/Z3.*
-
-### Technologies pertinentes
-Python, Z3 SMT Solver, Solidity, Slither
+### Difficulte : 3/5
 
 ---
 
-## 11. Selection de transactions dans un bloc blockchain
+## B4 - Ordonnancement industriel (RCPSP)
 
-### Description du probleme et contexte
-La selection de transactions pour un bloc blockchain est un probleme de knapsack avec contraintes de taille et de frais (gas). Les mineurs/selecteurs doivent maximiser les frais tout en respectant les limites de bloc. C'est un cas d'application concret de l'optimisation combinatoire.
+Le Resource-Constrained Project Scheduling Problem (RCPSP) est le probleme de reference en ordonnancement sous contraintes de ressources. Il consiste a planifier un ensemble de taches avec des contraintes de precedence et des ressources renouvelables limitees (personnel, machines, budget) de maniere a minimiser le makespan. Le RCPSP generalise le job-shop scheduling et constitue le benchmark canonique en CP. Les modeles CP-SAT avec IntervalVar et Cumulative sont particulierement performants sur ce probleme, et les benchmarks PSPLIB fournissent des instances allant de 30 a 1200 taches.
 
-### References
-- Bonneau et al. - *On Bitcoin Mining* - CITP 2014. [PDF](https://freedom-to-tinker.com/wp-content/uploads/sites/7/2014/10/BitcoinMining-tocs.pdf)
-- Narayanan et al. - *Bitcoin and Cryptocurrency Technologies* - Princeton
-- [Arxiv - MEV and Transaction Ordering](https://arxiv.org/abs/2310.00027) - 2024
+### Objectifs
+- Modeliser le RCPSP en CP-SAT avec IntervalVar (taches), NoOverlap (precedence) et Cumulative (ressources)
+- Implementer les variantes RCPSP/max (decalages temporels generalises) et multi-mode (plusieurs durees/ressources par tache)
+- Evaluer sur les instances PSPLIB (j30, j60, j120) et comparer avec les meilleurs resultats publies
+- Etudier l'impact des strategies de branchement (VSIDS, activity-based) sur les performances
+- Comparer CP-SAT avec une metaheuristique (GA ou SA) sur les grandes instances (j120+)
 
-### Point de depart
-```python
-# Modelisation knapsack avec CP-SAT
-# Variables : include[t] = 1 si la transaction t est incluse dans le bloc
-# Contraintes : sum(size[t] * include[t]) <= block_size_limit
-# Contraintes : dependances entre transactions (si tx_parent incluse, tx_child possible)
-# Objectif : maximiser sum(fee[t] * include[t])
-```
+### Notebooks CoursIA pertinents
 
-### Instances et donnees
-- [Ethereum transaction datasets](https://etherscan.io/)
-- [Bitcoin transaction data](https://blockchain.info/)
-- [MEV-Explore - transaction ordering](https://explore.mev.wiki/)
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4.ipynb) | IntervalVar, NoOverlap, Cumulative |
+| App-4 Job-Shop Scheduling | [Search/Applications/CSP/App-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/CSP/App-4.ipynb) | Job-shop CP-SAT |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Optimisation, objectifs multiples |
+| Search-11 Metaheuristiques | [Search/Part1-Foundations/Search-11.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-11.ipynb) | GA, SA pour grands problemes |
 
-### Approches suggerees
-- Modelisation knapsack avec CP-SAT
-- Contraintes de taille et de gas
-- Extension : ordering des transactions (MEV)
-- Comparaison avec heuristiques gloutonnes
+### References externes
+- Hartmann, S., & Briskorn, D. (2010). "A Survey of Variants and Extensions of the Resource-Constrained Project Scheduling Problem." *European Journal of Operational Research*, 207(1), 1-14. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0377221709017878)
+- PSPLIB: Project Scheduling Problem Library. [PSPLIB](https://www.om-db.wi.tum.de/psplib/)
+- Laborie, P. (2009). "IBM ILOG CP Optimizer for Detailed Scheduling Illustrated on Three Problems." *CPAIOR*. [Springer](https://link.springer.com/chapter/10.1007/978-3-642-01929-6_12)
+- Ormann, W.P., et al. (2009). "A Survey of the State-of-the-Art in RCPSP." *International Journal of Production Research*. [Tandfonline](https://www.tandfonline.com/doi/abs/10.1080/00207540903165123)
 
-### Contenu CoursIA connexe
-- **SmartContracts/** (serie complete) : blockchain, transactions, primitives DeFi — contexte blockchain
-- **CSP-5-Optimization** : Knapsack — la selection de transactions est essentiellement un probleme de knapsack
-- **CSP-7-Soft** : soft constraints, optimisation ponderee (maximisation des frais)
-
-### Technologies pertinentes
-Python, OR-Tools CP-SAT, web3.py
+### Difficulte : 3/5
 
 ---
 
-## 12. Optimisation energetique de centres de donnees (Green Scheduling)
+## C1 - Tournees de livraison vertes (Electric VRP)
 
-### Description du probleme et contexte
-L'optimisation energetique des data centers vise a reduire la consommation electrique en regroupant les charges sur moins de serveurs (consolidation) et en utilisant les energies renouvelables. Les contraintes incluent la performance et le refroidissement. Google a publie des travaux pionniers sur le sujet.
+Le Electric Vehicle Routing Problem (EVRP) etend le Vehicle Routing Problem classique en ajoutant des contraintes d'autonomie de batterie, de recharge aux bornes, et de couts energetiques variables selon le profil de la route (pente, vitesse, charge transportee). L'objectif est de planifier les tournees d'une flotte de camions electriques en minimisant la distance totale ou les emissions de CO2, tout en respectant les fenetres horaires des clients et les capacites des vehicules. La modelisation CP-SAT combine des contraintes de tournees (Circuit), de capacite (Knapsack), et d'autonomie (fenetres cumulatives).
 
-### References
-- Kishore et al. - *Green Scheduling* - IEEE 2018
-- [Google - Carbon Intelligent Computing](https://ai.googleblog.com/2020/06/carbon-aware-computing-for-data.html)
-- [OR StackExchange - Data Center Optimization](https://or.stackexchange.com/questions/tagged/data-centers)
+### Objectifs
+- Modeliser l'EVRP en CP-SAT avec contraintes de tournee, capacite, autonomie batterie et recharge
+- Implementer les contraintes de consommation energetique variable (distance, charge, pente)
+- Ajouter la localisation optimale des bornes de recharge comme variable de decision
+- Evaluer sur les benchmarks EVRP de la litterature (Schneider et al., 2014; Felipe et al., 2014)
+- Comparer CP-SAT avec ALNS (Adaptive Large Neighborhood Search) sur les grandes instances
 
-### Point de depart
-```python
-# Modelisation CP : consolidation de VMs
-# Variables : active[s] = 1 si le serveur s est allume
-#            assign[v] = serveur pour la VM v
-# Contraintes : capacite CPU/RAM par serveur, temperature
-# Objectif : minimiser sum(active[s]) + penalites temperature
+### Notebooks CoursIA pertinents
 
-# Extension : prise en compte du prix de l'electricite horaire
-```
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| App-17 VRP Logistics | [Search/Applications/CSP/App-17.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/CSP/App-17.ipynb) | VRP CP-SAT |
+| App-17 VRP Hybrid | [Search/Applications/Hybrid/App-17.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/Hybrid/App-17.ipynb) | VRP avec SA, GA, ACO |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Knapsack, capacite |
+| App-13 TSP Metaheuristics | [Search/Applications/Hybrid/App-13.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/Hybrid/App-13.ipynb) | TSP, tournees |
 
-### Instances et donnees
-- [Google Cluster Trace](https://github.com/google/cluster-data) - Donnees reelles de clusters
-- [PlanetLab traces](https://www.planet-lab.org/)
+### References externes
+- Schneider, M., Stenger, A., & Goeke, D. (2014). "The Electric Vehicle-Routing Problem with Time Windows and Recharging Stations." *Transportation Science*, 48(4), 500-520. [INFORMS](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2013.0490)
+- Felipe, A., et al. (2014). "A Heuristic Approach for the Green Vehicle Routing Problem." *Expert Systems with Applications*, 41(14), 6424-6437. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0957417414002159)
+- Erdelic, T., & Caric, T. (2019). "A Survey on the Electric Vehicle Routing Problem: Variants and Solution Approaches." *Journal of Advanced Transportation*. [Hindawi](https://www.hindawi.com/journals/jat/2019/5075671/)
+- Xiao, Y., et al. (2012). "Development of a Fuel Consumption Optimization Model for the Capacitated Vehicle Routing Problem." *Computers & Operations Research*, 39(7), 1419-1431. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0305054811002731)
 
-### Approches suggerees
-- Modelisation CP avec contraintes de placement
-- Minimisation de la consommation (PUE)
-- Integration avec les prix de l'electricite
-- Dynamic workload management
-
-### Contenu CoursIA connexe
-- **CSP-4-Scheduling** : scheduling avec CP-SAT — primitives applicables
-- **CSP-5-Optimization** : techniques d'optimisation
-- **CSP-7-Soft** : soft constraints (energie comme objectif)
-
-### Technologies pertinentes
-Python, OR-Tools CP-SAT, PuLP
+### Difficulte : 3/5
 
 ---
 
-## 13. Placement de services en edge computing avec contraintes de latence
+## C2 - Ordonnancement ferroviaire (Railway Timetabling)
 
-### Description du probleme et contexte
-Le placement de services en edge computing consiste a deployer des applications sur des noeuds de calcul distribues pour minimiser la latence et la consommation de bande passante. Les contraintes incluent les ressources et la localisation. Applications : IoT, 5G, applications temps reel.
+Le Railway Timetabling Problem consiste a planifier les passages de trains sur un reseau ferroviaire en respectant les contraintes de voie unique (sur certains troncons), de signalisation (intervalles minimum entre trains), de correspondances (correspondance entre lignes), et de temps de trajet minimum/maximum. C'est un probleme de scheduling massif avec des ressources partagees (voies, quais, signaux) qui se modelise avec IntervalVar, NoOverlap (pour les troncons a voie unique) et Cumulative (pour les gares a quais multiples). Le modele PESP (Periodic Event Scheduling Problem) est la formalisation de reference.
 
-### References
-- Zhang - *Edge Placement with CP* - ENPP. [PDF](https://arxiv.org/abs/2101.00127)
-- Guyonet et al. - *Edge Resource Allocation* - CP 2021
-- [Azure Edge Zones Documentation](https://azure.microsoft.com/en-us/products/edge-zones/)
+### Objectifs
+- Modeliser le Railway Timetabling comme un probleme PESP avec contraintes periodiques et CP-SAT
+- Implementer les contraintes de bloc (voies uniques), de signalisation, et de correspondance entre lignes
+- Ajouter la gestion des perturbations (retards) comme un probleme de re-scheduling en temps reel
+- Evaluer sur les instances PESP et les benchmarks ferroviaires (ROSA, FPtransport)
+- Analyser la scalabilite du modele CP-SAT sur des reseaux de taille reelle
 
-### Point de depart
-```python
-# Modelisation p-median avec contraintes de ressources
-# Variables : place[s] = 1 si le service s est deploye sur le noeud n
-#            route[u] = noeud edge servant l'utilisateur u
-# Contraintes : ressources par noeud, latence max
-# Objectif : minimiser latence moyenne + cout de deploiement
-```
+### Notebooks CoursIA pertinents
 
-### Approches suggerees
-- Modelisation p-median avec contraintes de ressources
-- Optimisation multi-objectifs (latence + cout)
-- Dynamic placement et migration
-- Integration avec Kubernetes
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4.ipynb) | IntervalVar, NoOverlap, Cumulative |
+| App-4 Job-Shop Scheduling | [Search/Applications/CSP/App-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/CSP/App-4.ipynb) | Job-shop, ressources partagees |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Optimisation multi-objectif |
+| Planners-7 Temporal Planning | [SymbolicAI/Planners/03-Advanced/Planners-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/03-Advanced/Planners-7.ipynb) | Planification temporelle |
 
-### Contenu CoursIA connexe
-- *Aucun contenu CoursIA specifique a l'edge computing* — s'appuie sur les primitives generales (CSP-4, CSP-5) dans un domaine nouveau.
+### References externes
+- Serafini, P., & Ukovich, W. (1989). "A Mathematical Model for Periodic Scheduling Problems." *SIAM Journal on Discrete Mathematics*, 2(4), 550-581. [SIAM](https://epubs.siam.org/doi/abs/10.1137/0402049)
+- Lusby, R.M., et al. (2011). "Railway Track Allocation: Models and Methods." *OR Spectrum*, 33(4), 843-883. [Springer](https://link.springer.com/article/10.1007/s00291-009-0188-0)
+- Cacchiani, V., et al. (2014). "An Overview of Recovery Models and Algorithms for Real-Time Railway Rescheduling." *Transportation Research Part B*, 63, 15-37. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0191261514000226)
+- Kroon, L., et al. (2009). "The New Dutch Timetable: The OR Revolution." *Interfaces*, 39(1), 6-17. [INFORMS](https://pubsonline.informs.org/doi/abs/10.1287/inte.1080.0402)
 
-### Technologies pertinentes
-Python, OR-Tools CP-SAT, Kubernetes API
+### Difficulte : 4/5
 
 ---
 
-## 14. Ordonnancement de missions satellites (Satellite Scheduling)
+## C3 - Livraison par drones (Drone Delivery Routing)
 
-### Description du probleme et contexte
-Le satellite scheduling problem consiste a planifier les prises de vue et les communications de satellites en respectant les contraintes orbitales, energetiques et de priorite. C'est un probleme de scheduling avec fenetres de temps, utilise par le CNES (SPIKE), la NASA (EUROPA) et l'ESA.
+Le Drone Delivery Routing Problem consiste a planifier les tournees d'une flotte de drones de livraison depuis un depot central, en respectant les contraintes d'autonomie (batterie), de capacite de charge (poids et volume), de zones de vol interdites, et de conditions meteorologiques. Ce probleme est une variante du VRP avec des specificites aeriennes : les drones ne sont pas soumis aux contraintes routieres mais ont une autonomie limitee et une capacite reduite. Le modele CP-SAT combine des contraintes de tournees, de capacite knapsack, et d'autonomie cumulative avec rechargement au depot.
 
-### References
-- Frank et al. - *EUROPA* - NASA. [Site](https://github.com/nasa/Intelligent-Data-Management)
-- Jussien - *Satellite Scheduling with CP* - ONERA 2015
-- [DIMACS Challenge 1998](https://www2.cs.sfu.ca/CourseCentral/827/havens/papers/topic%2312(SatelliteScheduling)/dimacs98.pdf)
+### Objectifs
+- Modeliser le Drone Delivery Routing comme un VRP avec contraintes specifiques drones (autonomie, capacite, zones) en CP-SAT
+- Implementer les contraintes de zone de vol interdite (polygones) et de distance euclidienne
+- Ajouter la coordination multi-drone (collision avoidance, synchronisation au depot)
+- Evaluer sur des instances synthetiques basees sur des donnees urbaines reelles
+- Comparer avec un modele de tournnees camions (classical VRP) pour quantifier l'apport drones
 
-### Point de depart
-```python
-# Modelisation CP avec intervalles et fenetres de temps
-# Variables : intervalles pour chaque observation (debut, fin, satellite)
-# Contraintes : pas de chevauchement sur un meme satellite/station sol
-#              fenetres de visibilite des cibles
-#              energie disponible
-# Objectif : maximiser la somme des priorites des observations
-```
+### Notebooks CoursIA pertinents
 
-### Instances et donnees
-- [Satellite Scheduling Benchmark - DIMACS](https://www2.cs.sfu.ca/CourseCentral/827/)
-- [Skyfield - astronomy library](https://rhodesmill.org/skyfield/) - Calcul orbital
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| App-17 VRP Logistics | [Search/Applications/CSP/App-17.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/CSP/App-17.ipynb) | VRP CP-SAT |
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4.ipynb) | Scheduling, ressources |
+| App-13 TSP Metaheuristics | [Search/Applications/Hybrid/App-13.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/Hybrid/App-13.ipynb) | TSP, heuristiques |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Optimisation combinatoire |
 
-### Approches suggerees
-- Modelisation CP avec intervalles et fenetres de temps
-- Contraintes orbitales et energetiques
-- Multi-satellites et constellations
-- Optimisation de la valeur scientifique
+### References externes
+- Murray, C.C., & Chu, A.G. (2015). "The Flying Sidekick Traveling Salesman Problem: Optimization of Drone-Assisted Parcel Delivery." *Transportation Research Part C*, 54, 86-109. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0968090X15001333)
+- Poikonen, S., et al. (2017). "Vehicle Routing Problems with Drones: Extended Models and Algorithms." *European Journal of Operational Research*. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0377221719304651)
+- Otto, A., et al. (2018). "Optimization of a Multi-Drone Delivery Network." *Transportation Research Part C*. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0968090X18301013)
+- Dorling, K., et al. (2017). "Vehicle Routing Problems for Drone Delivery." *IEEE Transactions on Systems, Man, and Cybernetics*. [IEEE](https://ieeexplore.ieee.org/document/7493220)
 
-### Contenu CoursIA connexe
-- **Planners-6-Domains** : couvre le domaine Satellite des benchmarks IPC/PDDL — base pour la planification satellite
-- **CSP-4-Scheduling** : intervalles, fenetres de temps — primitives pour le scheduling orbital
-
-### Technologies pertinentes
-Python, OR-Tools CP-SAT, Skyfield (astronomy)
+### Difficulte : 3/5
 
 ---
 
-## 15. Cryptanalyse d'un chiffre par substitution (decryptage automatise)
+## C4 - Optimisation de constellation satellite
 
-### Description du probleme et contexte
-La cryptanalyse de chiffres par substitution monoalphabetique consiste a retrouver la clef de chiffrement en analysant la distribution des lettres et les motifs du texte. La modelisation CSP permet de combiner des contraintes linguistiques et statistiques. C'est un sujet classique de la cryptographie combinatoire.
+L'optimisation de constellation satellite consiste a planifier les observations et les communications d'un ensemble de satellites en orbite, sous des contraintes de fenetres de visibilite (le satellite ne peut observer qu'une zone au sol lorsqu'il la survole), d'energie solaire (panneaux charges en journee), de memoire embarquee limitee, et de conflits entre observations simultanees. C'est un probleme de scheduling spatial qui combine des contraintes temporelles strictes (fenetres de visibilite calculees par mecanique orbitale) et des contraintes de ressources (energie, memoire, antennes).
 
-### References
-- Cornell - *Cryptanalysis with CSP* - BOOM 2001. [Page](https://www.cs.cornell.edu/boom/2001sp/Barry/)
-- Lucks - *Cryptanalysis and CP* - Crypto 1988
-- [Wikipedia - Substitution cipher](https://en.wikipedia.org/wiki/Substitution_cipher)
-- [hakank.org - OR-Tools cryptarithm solver](https://hakank.org/or-tools/cryptarithm.py)
+### Objectifs
+- Modeliser le scheduling de constellation satellite en CP-SAT avec IntervalVar pour les observations et fenetres de visibilite
+- Implementer les contraintes de fenetre de visibilite (propagation orbitale), d'energie (budget cumulatif), et de memoire embarquee
+- Ajouter les contraintes de conflit (un satellite ne peut observer deux zones en meme temps) et de downlink
+- Evaluer sur des instances synthetiques basees sur les parametres orbitaux de constellations reelles (Starlink, OneWeb)
+- Comparer CP-SAT avec un algorithme glouton base sur les fenetres de visibilite priorisees
 
-### Point de depart
-```python
-# Modelisation CSP avec contraintes de permutation
-# Variables : mapping[l] = lettre claire pour la lettre chiffree l
-# Contraintes : AllDifferent (bijection), mots dans le dictionnaire
-# Extension : frequences des lettres, bigrammes, trigrammes
+### Notebooks CoursIA pertinents
 
-from ortools.sat.python import cp_model
-# Voir aussi : hakank.org pour des exemples de cryptarithmes
-```
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4.ipynb) | IntervalVar, scheduling |
+| App-4 Job-Shop Scheduling | [Search/Applications/CSP/App-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/CSP/App-4.ipynb) | Job-shop, affectation |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Optimisation sous contraintes |
+| Search-11 Metaheuristiques | [Search/Part1-Foundations/Search-11.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-11.ipynb) | Metaheuristiques |
 
-### Instances et donnees
-- [Cryptogram solving - Wikipedia](https://en.wikipedia.org/wiki/Cryptogram)
-- [NLTK - corpus et dictionnaires](https://www.nltk.org/) - word lists, frequency data
-- [English letter frequency data](https://en.wikipedia.org/wiki/Letter_frequency)
+### References externes
+- Gabrel, V., & Vanderbeck, F. (2014). "Collection Planning for the SPOT Satellite Constellation." *INFORMS Journal on Computing*, 26(2), 367-382. [INFORMS](https://pubsonline.informs.org/doi/abs/10.1287/ijoc.2013.0568)
+- Lemaitre, M., et al. (2002). "Selecting and Scheduling Observations of Agile Satellites." *Aerospace Science and Technology*, 6(5), 367-381. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S1270963802011732)
+- She, X., et al. (2022). "A Survey on Satellite Task Scheduling." *Aerospace*. [MDPI](https://www.mdpi.com/2226-4310/9/1/33)
+- Wang, P., et al. (2016). "Multi-Objective Satellite Scheduling with CP." *Constraints*, 21(3), 402-429. [Springer](https://link.springer.com/article/10.1007/s10601-016-9236-7)
 
-### Approches suggerees
-- Modelisation CSP avec contraintes de permutation
-- Frequences des lettres et bigrammes
-- Dictionnaire et motifs de mots
-- Integration avec NLP (language models pour le scoring)
-
-### Contenu CoursIA connexe
-- **CSP-1-Fundamentals** : la cryptarithmetique est mentionnee comme exemple CSP (lettres -> chiffres)
-- **SmartContracts/** : couvre la cryptographie (ZKP, HE) mais pas le cassage de chiffres classiques
-- *Le sujet etend l'exemple du cours en un projet complet de cryptanalyse.*
-
-### Technologies pertinentes
-Python, OR-Tools CP-SAT, NLTK, frequency analysis
+### Difficulte : 4/5
 
 ---
 
-## 16. Solveurs SMT pour la biologie synthetique
+## D1 - Allocation de ressources cloud (VM Scheduling)
 
-### Description du probleme et contexte
-La biologie synthetique utilise des solveurs SMT pour verifier la coherence de modeles biologiques, detecter des contradictions dans des reseaux de regulation genetique, et concevoir des circuits genetiques. Ce sujet combine optimisation combinatoire et biologie computationnelle, un domaine en pleine expansion.
+Le VM Scheduling Problem consiste a allouer des machines virtuelles (VMs) avec des caracteristiques heterogenes (CPU, RAM, stockage, bande passante) sur des serveurs physiques, sous des contraintes de capacite, d'affinite (certaines VMs doivent etre co-localisees ou separees pour des raisons de securite/performance), et de resilience (anti-affinite pour la tolerance aux pannes). C'est un probleme de Bin Packing multi-dimensionnel avec des contraintes d'affinite, directement modelisable en CP-SAT.
 
-### References
-- [BioSMT - SMT solving for biology](https://github.com/biosynthesis/biosmt)
-- Bartocci et al. - *SMT-based analysis of biological systems* - 2020. [PDF](https://arxiv.org/abs/2005.07028)
-- [iBioSim - genetic circuit design tool](https://async.ece.utah.edu/ibiosim/)
-- [SBOL - Synthetic Biology Open Language](https://sbolstandard.org/)
+### Objectifs
+- Modeliser le VM Scheduling comme un Bin Packing multi-dimensionnel avec contraintes d'affinite en CP-SAT
+- Implementer les contraintes de capacite (CPU, RAM, stockage), d'affinite/anti-affinite, et de resilience
+- Ajouter la consolidation dynamique (migration de VMs) et la minimisation de la fragmentation
+- Evaluer sur des instances reelles (Google Cluster Trace) et des benchmarks synthetiques
+- Comparer avec le First Fit Decreasing (FFD) et un modele PLNE sur les memes instances
 
-### Point de depart
-```python
-# Modelisation SMT : verification de reseaux de regulation genetique
-# Variables : concentration[g, t] = niveau d'expression du gene g au temps t
-# Contraintes : relations d'activation/inhibition entre genes
-#              bornes de concentration
-# Verification : trouver un etat atteignable qui viole une propriete
+### Notebooks CoursIA pertinents
 
-from z3 import Real, Solver, And, Or, Implies
-```
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Bin Packing, Knapsack |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation CSP |
+| Search-9 Programmation lineaire | [Search/Part1-Foundations/Search-9.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-9.ipynb) | PLNE, relaxation |
+| CSP-7 Soft Constraints | [Search/Part2-CSP/CSP-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-7.ipynb) | Preferences, penalites |
 
-### Ressources supplementaires
-- [Antimony - model description language](https://antimony.sourceforge.io/)
-- [Tellurium - Python for systems biology](http://tellurium.analogmachine.org/)
+### References externes
+- Mann, Z.A. (2015). "Allocation of Virtual Machines in Cloud Data Centers - A Survey." *European Journal of Operational Research*, 246(3), 779-798. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0377221715003633)
+- Google Cluster Trace. [GitHub](https://github.com/google/cluster-data)
+- Beloglazov, A., & Buyya, R. (2012). "Optimal Online Deterministic Algorithms and Adaptive Heuristics for Energy and Performance Efficient Dynamic Consolidation." *Future Generation Computer Systems*, 28(5), 753-768. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0167739X11000689)
+- Salimian, A., et al. (2017). "A Survey of Energy-Aware Scheduling in Cloud Computing." *The Journal of Supercomputing*. [Springer](https://link.springer.com/article/10.1007/s11227-017-2190-3)
 
-### Approches suggerees
-- Modelisation SMT pour la verification de reseaux de regulation
-- Detection de contradictions et identification de parametres critiques
-- Conception assistee de circuits genetiques
-- Comparaison avec la simulation numerique classique
-
-### Contenu CoursIA connexe
-- **Linq2Z3.ipynb** : Z3 SMT Solver — fondation directe pour la modelisation SMT
-- **Sudoku/Sudoku-12-Z3-*.ipynb** : resolution Sudoku avec Z3 — exemples de modelisation SMT
-- *Aucun contenu CoursIA specifique a la biologie* — le sujet applique les outils Z3 a un domaine entierement nouveau.
-
-### Technologies pertinentes
-Python, Z3 SMT Solver, Tellurium, libSBML
+### Difficulte : 3/5
 
 ---
 
-## 17. Participation a une competition CP/SAT/SMT
+## D2 - Optimisation energetique de centres de donnees
 
-### Description du probleme et contexte
-Chaque annee, plusieurs competitions internationales evaluent les progres en resolution de problemes CP, SAT et SMT. Les contributions prennent deux formes : (1) developpement de solveurs ou d'heuristiques, (2) creation de benchmarks et instances de test. Participer a une competition est une excellente facon de se mesurer a l'etat de l'art.
+L'optimisation energetique des centres de donnees consiste a minimiser la consommation electrique (PUE - Power Usage Effectiveness) en reglant dynamiquement l'etat des serveurs (actif, veille, eteint), la consolidation des charges de travail, et l'utilisation du free cooling (refroidissement par air exterieur). Les contraintes portent sur la capacite de traitement, la temperature maximale des salles, les SLA (Service Level Agreements), et la disponibilite de l'energie renouvelable. C'est un probleme d'ordonnancement sous contraintes de ressources et d'energie, pionnier chez Google.
 
-### Competitions disponibles
-- **MiniZinc Challenge** : modelisation CP en MiniZinc. [Site](https://www.minizinc.org/challenge.html) (juin-juillet)
-- **SAT Competition** : solveurs SAT. [Site](https://satcompetition.github.io/2024/) (juillet)
-- **SMT-COMP** : solveurs SMT. [Site](https://smtcomp.github.io/2024/) (juillet)
-- **International Planning Competition (IPC)** : planification. [Site](https://ipc2024.net/) (aout)
-- **International Timetabling Competition (ITC)** : emploi du temps. [Site](https://www.itc2024.org/)
+### Objectifs
+- Modeliser l'ordonnancement energetique comme un probleme de consolidation dynamique avec CP-SAT
+- Implementer les contraintes de temperature, de SLA, de capacite de refroidissement et d'energie renouvelable
+- Ajouter la gestion des cretes de consommation (peak shaving) par ordonnancement differe
+- Evaluer sur des profils de charge reels (Google Cluster Trace, Azure Trace) et des donnees meteorologiques
+- Comparer l'approche CP-SAT avec une politique de seuil (hysteresis) et une metaheuristique
 
-### Point de depart
-```python
-# Option 1 : Participer avec OR-Tools CP-SAT
-#   - Choisir une categorie de la MiniZinc Challenge
-#   - Modeliser les instances en Python avec CP-SAT
-#   - Comparer les performances avec les solutions reference
+### Notebooks CoursIA pertinents
 
-# Option 2 : Creer des benchmarks originaux
-#   - Choisir un probleme reel non couvert par CSPLib
-#   - Generer des instances de difficulte croissante
-#   - Proposer un article decrivant les instances
-```
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4.ipynb) | IntervalVar, scheduling |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Bin Packing, consolidation |
+| CSP-7 Soft Constraints | [Search/Part2-CSP/CSP-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-7.ipynb) | Soft constraints, compromis |
+| Search-11 Metaheuristiques | [Search/Part1-Foundations/Search-11.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-11.ipynb) | Optimisation globale |
 
-### Ressources supplementaires
-- [CSPLib - Problem Library](https://www.csplib.org/) - Problemes de reference
-- [MiniZinc - Documentation](https://www.minizinc.org/doc-2.5.5/en/) - Langage de modelisation
-- [Past competition results](https://www.minizinc.org/challenge/results.html)
+### References externes
+- Beloglazov, A., et al. (2012). "Energy-Aware Resource Allocation Heuristics for Efficient Management of Data Centers." *Future Generation Computer Systems*, 28(5), 755-768. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0167739X11000689)
+- Google Environmental Report: Data Centers. [Google](https://environment.google/responsible-supply-chain/data-centers/)
+- Orgerie, A.C., et al. (2014). "A Survey on Techniques for Improving the Energy Efficiency of Large-Scale Distributed Systems." *ACM Computing Surveys*, 46(4). [ACM DL](https://dl.acm.org/doi/10.1145/2532368)
+- Dayarathna, M., et al. (2016). "Data Center Energy Consumption Modeling: A Survey." *IEEE Communications Surveys & Tutorials*, 18(1), 732-794. [IEEE](https://ieeexplore.ieee.org/document/7186553)
 
-### Approches suggerees
-- Choix d'une competition et d'une categorie
-- Modelisation avec CP-SAT ou Z3
-- Optimisation des performances (search strategies, symmetry breaking)
-- Redaction d'un rapport comparatif avec l'etat de l'art
-
-### Contenu CoursIA connexe
-- **CSP-6-Hybridation** : CP+SAT architecture (LCG), CP-SAT internals — preparation directe
-- **App-8-MiniZinc** : syntaxe MiniZinc, contraintes globales — preparation pour la MiniZinc Challenge
-- **Linq2Z3.ipynb** : Z3 SMT Solver — preparation pour SMT-COMP
-- **OR-tools-Stiegler.ipynb** : OR-Tools CP — preparation pour les benchmarks CP
-- *CoursIA couvre tous les solveurs necessaires. Le projet consiste a les appliquer sur des benchmarks de competition.*
-
-### Technologies pertinentes
-Python, OR-Tools CP-SAT, MiniZinc, Z3
+### Difficulte : 3/5
 
 ---
 
-## 18. Agent de recrutement par optimisation sous contraintes
+## D3 - Placement de services en edge computing
 
-### Description du probleme et contexte
-Le recrutement optimal consiste a affecter des candidats a des postes en respectant des contraintes de competences, de disponibilite, de budget et de diversite. C'est un probleme d'affectation multicritere (extension du Stable Marriage Problem) avec des contraintes de capacite, de compatibilite d'equipes et de quotas reglementaires. Applications : RH d'entreprise, admissions universitaires, constitution d'equipes de projet.
+Le placement de services en edge computing consiste a determiner sur quels noeuds de bord de reseau (edge nodes) deployer des microservices (ou des fonctions serverless) de maniere a minimiser la latence percue par les utilisateurs, sous des contraintes de capacite de calcul, de memoire, de bande passante, et de couverture geographique. C'est un probleme de localisation-allocation avec des contraintes de latence (SLA temporel), directement apparente au p-median avec contraintes de capacite. La modelisation CP-SAT est naturelle avec des variables binaires d'affectation et des contraintes de distance maximale.
 
-### References
-- Manlove - *Algorithmics of Matching under Preferences* - World Scientific 2013
-- Romeo et al. - *Optimal Assignment of Students to Projects* - CP 2012
-- [OR-Tools Assignment example](https://developers.google.com/optimization/assignment/assignment_example)
-- Irving - *The Stable Marriage Problem* - 1985
+### Objectifs
+- Modeliser le placement de services edge comme un probleme de localisation-allocation avec CP-SAT
+- Implementer les contraintes de latence (distance reseau), de capacite (CPU, RAM, bande passante), et de redondance
+- Ajouter la dynamique temporelle (variation de charge au cours de la journee) avec un modele multi-periodes
+- Evaluer sur des topologies reelles (Azure Edge, AWS Wavelength) et des traces de charge synthetiques
+- Comparer avec un algorithme glouton (nearest fit) et un modele PLNE relaxe
 
-### Point de depart
-```python
-# Modelisation CP-SAT : affectation candidats -> postes
-# Variables : assign[c, p] = 1 si le candidat c est affecte au poste p
-# Contraintes : chaque candidat a au plus 1 poste, chaque poste a au plus k candidats
-#              competences requises couvertes, budget salarial respecte
-#              quotas de diversite (genre, background)
-# Objectif : maximiser la somme des scores de compatibilite
-```
+### Notebooks CoursIA pertinents
 
-### Contenu CoursIA connexe
-- **GameTheory/** : Gale-Shapley (Stable Marriage) — base algorithmique pour le matching
-- **CSP-4-Scheduling** : contraintes de capacite et d'affectation — directement applicables
-- **CSP-7-Soft** : soft constraints pour les preferences de candidats et de recruteurs
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Allocation, Knapsack |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation CSP |
+| Search-1 StateSpace | [Search/Part1-Foundations/Search-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-1.ipynb) | Graphes, parcours |
+| CSP-9 Distributed CSP | [Search/Part2-CSP/CSP-9.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-9.ipynb) | Multi-agent, distribution |
 
-### Technologies pertinentes
-Python, OR-Tools CP-SAT, PuLP
+### References externes
+- Mao, Y., et al. (2017). "A Survey on Mobile Edge Computing: The Communication Perspective." *IEEE Communications Surveys & Tutorials*, 19(4), 2322-2358. [IEEE](https://ieeexplore.ieee.org/document/7932343)
+- Lai, P., et al. (2020). "Optimal Edge Service Placement in Mobile Edge Computing." *IEEE Transactions on Mobile Computing*. [IEEE](https://ieeexplore.ieee.org/document/8920320)
+- Wang, X., et al. (2019). "Convergence of Edge Computing and Deep Learning." *IEEE Wireless Communications*. [IEEE](https://ieeexplore.ieee.org/document/8732352)
+- Mach, P., & Becvar, Z. (2017). "Mobile Edge Computing: A Survey on Architecture and Computation Offloading." *IEEE Communications Surveys & Tutorials*, 19(3), 1628-1656. [IEEE](https://ieeexplore.ieee.org/document/7899390)
 
----
-
-## 19. Generation procedurale de niveaux de jeu par propagation de contraintes
-
-### Description du probleme et contexte
-La generation procedurale de niveaux de jeu (donjons, cartes, puzzles) peut etre formulee comme un probleme de satisfaction de contraintes : le niveau genere doit etre jouable, avoir une difficulte cible, et respecter les regles du jeu. L'algorithme WaveFunctionCollapse (WFC) est lui-meme un algorithme de propagation de contraintes. Ce sujet combine creation de contenu et optimisation combinatoire.
-
-### References
-- Karth and Smith - *WaveFunctionCollapse is Constraint Solving in the Wild* - PCG 2017. [PDF](https://adamsmith.as/papers/wfc_is_constraint_solving_in_the_wild.pdf)
-- [WFC reference implementation (GitHub)](https://github.com/mxgmn/WaveFunctionCollapse)
-- Togelius et al. - *Procedural Content Generation in Games* - Springer 2011
-- [PCG Wiki](https://pcg.wikidot.com/)
-
-### Point de depart
-```python
-# Modelisation CP : generation d'un niveau de labyrinthe
-# Variables : tile[x, y] = type de tuile a la position (x, y)
-# Contraintes : adjacence (les tuiles voisines doivent etre compatibles)
-#              unicite du chemin de depart a l'arrivee
-#              nombre d'ennemis/placements respectant la difficulte cible
-# Extension : WaveFunctionCollapse comme algorithme de propagation
-```
-
-### Contenu CoursIA connexe
-- **CSP-1-Fundamentals** : arc consistency, propagation de contraintes — base theorique pour WFC
-- **Sudoku/** : 18 notebooks couvrant la generation et resolution de grilles — pattern similaire
-- *WFC est un algorithme de propagation de contraintes de facto. Ce sujet demontre l'application des CP au game design.*
-
-### Technologies pertinentes
-Python, OR-Tools CP-SAT, pygame
+### Difficulte : 3/5
 
 ---
 
-## 20. Negociateur multi-agents par optimisation (Mechanism Design)
+## D4 - Dispatch dans un reseau electrique
 
-### Description du probleme et contexte
-Le mechanism design et la theorie des jeux cooperatifs permettent de concevoir des regles d'interaction optimales entre agents ayant des preferences privees. Trouver un accord de negociation multi-parties (Pareto-optimal) sous contraintes de budget, de temps et de strategie est un probleme d'optimisation combinatoire. Applications : enchere combinatoire, partage de ressources, coalition formation.
+Le dispatch economique (Economic Dispatch) consiste a determiner la production optimale de chaque centrale electrique d'un reseau pour satisfaire la demande a chaque instant, en minimisant le cout total de production tout en respectant les contraintes de capacite des lignes de transport, les limites de generation par centrale, et l'equilibre offre-demande en temps reel. Avec l'integration des energies renouvelables intermittentes (eolien, solaire), le probleme devient stochastique. La modelisation CP-SAT capture les contraintes discretes (on/off des centrales, demarrage minimum) et les contraintes lineaires de flux.
 
-### References
-- Nisan et al. - *Algorithmic Game Theory* - Cambridge 2007. [En ligne](https://www.cambridge.org/core/books/algorithmic-game-theory/)
-- Roth - *Who Gets What -- and Why* - Houghton Mifflin 2015
-- Sandholm - *Automated Mechanism Design* - UAI 2003
-- [Gale-Shapley implementation](https://en.wikipedia.org/wiki/Gale%E2%80%93Shapley_algorithm)
+### Objectifs
+- Modeliser le dispatch economique comme un probleme d'optimisation sous contraintes avec CP-SAT
+- Implementer les contraintes de capacite de generation, de lignes de transport, et d'equilibre offre-demande
+- Ajouter les couts de demarrage/arret des centrales (unit commitment) et les reserves de spinning
+- Etendre au cas stochastique avec des scenarios de production renouvelable (eolien, solaire)
+- Evaluer sur des instances IEEE (IEEE 14-bus, 30-bus, 118-bus) et des donnees RTE France
 
-### Point de depart
-```python
-# Modelisation CP : negociation multi-agents avec contraintes
-# Variables : allocation[a, r] = quantite de ressource r allouee a l'agent a
-# Contraintes : budget de chaque agent, disponibilite des ressources
-#              contrainte de participation (utilite >= utilite de reservation)
-# Objectif : maximiser le welfare social (somme des utilites)
-# Extension : equilibre de Nash sous contraintes, mechanismes incitatifs
-```
+### Notebooks CoursIA pertinents
 
-### Contenu CoursIA connexe
-- **GameTheory/** : 17+ notebooks couvrant Nash Equilibrium, Cooperative Games, Shapley Value, Mechanism Design — fondation complete
-- **CSP-5-Optimization** : techniques d'optimisation multicritere
-- **CSP-7-Soft** : preferences et utilites comme soft constraints
-- *CoursIA couvre la theorie des jeux en profondeur. Ce sujet l'applique via des solveurs CP.*
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Search-9 Programmation lineaire | [Search/Part1-Foundations/Search-9.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-9.ipynb) | PLNE, simplex, optimisation lineaire |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Optimisation sous contraintes |
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4.ipynb) | IntervalVar, scheduling temporel |
+| App-10 Portfolio | [Search/Applications/Hybrid/App-10.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/Hybrid/App-10.ipynb) | Optimisation sous contraintes de budget |
 
-### Technologies pertinentes
-Python, OR-Tools CP-SAT, NetworkX, Nashpy
+### References externes
+- Wood, A.J., & Wollenberg, B.F. (2012). "Power Generation, Operation, and Control." *Wiley*. [Wiley](https://www.wiley.com/en-us/Power+Generation%2C+Operation%2C+and+Control%2C+3rd+Edition-p-9780471790556)
+- Padhy, N.P. (2004). "Unit Commitment - A Bibliographical Survey." *IEEE Transactions on Power Systems*, 19(2), 1196-1205. [IEEE](https://ieeexplore.ieee.org/document/1291440)
+- IEEE Power Systems Test Case Archive. [University of Washington](https://labs.ece.uw.edu/pstca/)
+- RTE France - Donnees en energie. [RTE](https://www.services-rte.com/fr/visualisez-les-donnees-publiees-par-rte.html)
+
+### Difficulte : 4/5
 
 ---
 
-## 21. Generation de tests par combinaisons couvrantes (Covering Arrays)
+## E1 - Super-optimisation gas Solidity par Max-SMT
 
-### Description du probleme et contexte
-La generation de tests combinatoires (pairwise testing, t-way testing) consiste a creer un ensemble minimal de configurations de test qui couvrent toutes les combinaisons de valeurs de parametres. C'est un probleme d'optimisation combinatoire classique (covering arrays) avec des applications industrielles majeures : test logiciel, test de configuration, test de securite.
+La super-optimisation de smart contracts Ethereum consiste a trouver automatiquement la sequence d'instructions EVM (Ethereum Virtual Machine) equivalente a un programme Solidite donnee, mais minimisant le cout en gas. Ce probleme se modelise comme un probleme de synthese de programmes sous contraintes d'equivalence fonctionnelle, ou les contraintes sont exprimees en SMT (Satisfiability Modulo Theories). L'outil Souffle ou Z3 permet de verifier l'equivalence entre le programme original et la version optimisee, tandis que l'objectif de minimisation du gas est un probleme d'optimisation Max-SMT.
 
-### References
-- Cohen et al. - *The AETG System: An Approach to Testing Based on Combinatorial Design* - IEEE TSE 1997
-- Kuhn et al. - *Combinatorial Software Testing* - Microsoft Research. [PDF](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/CombinatorialTesting.pdf)
-- [NIST Covering Array tools](https://csrc.nist.gov/projects/automated-combinatorial-testing)
-- [ACTS tool (NIST)](https://csrc.nist.gov/Projects/Automated-Combinatorial-Testing/Tools)
+### Objectifs
+- Modeliser la super-optimisation EVM comme un probleme Max-SMT avec contraintes d'equivalence et objectif de gas minimum
+- Implementer la verification d'equivalence fonctionnelle entre sequences d'instructions avec Z3
+- Explorer l'espace des sequences d'instructions equivalentes via echantillonnage et contraintes SMT
+- Evaluer sur des snippets Solidity courants (arithmetic operations, storage access, loops)
+- Comparer avec les optimiseurs existants (solc --optimize, EOSii)
 
-### Point de depart
-```python
-# Modelisation CP-SAT : covering array CA(N; t, k, v)
-# Variables : test[i, j] = valeur du parametre j dans le test i
-# Contraintes : pour chaque t-uplet de parametres (j1, ..., jt),
-#              toutes les combinaisons de valeurs apparaissent au moins une fois
-# Objectif : minimiser N (nombre de tests)
+### Notebooks CoursIA pertinents
 
-# Exemple : pairwise (t=2) testing d'une page web avec
-# 5 navigateurs x 3 OS x 4 resolutions = couvrir toutes les paires
-```
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SC-14 Formal Verification | [SymbolicAI/SmartContracts/03-Foundry-Testing/SC-14.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/03-Foundry-Testing/SC-14.ipynb) | Verification formelle Solidity |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Z3 SMT Solver |
+| SC-13 Fuzz Testing | [SymbolicAI/SmartContracts/03-Foundry-Testing/SC-13.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/03-Foundry-Testing/SC-13.ipynb) | Tests et verification |
+| SC-7 Solidity Advanced | [SymbolicAI/SmartContracts/02-Solidity-Advanced/SC-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/02-Solidity-Advanced/SC-7.ipynb) | EVM, gas, opcodes |
 
-### Instances et donnees
-- [NIST Covering Array Repository](https://math.nist.gov/coveringarrays/) - Instances de reference
-- [Covering array tables (CATS)](https://www.unl.edu/~cse/files/Research/CATS/CATS.html) - Benchmark solver
+### References externes
+- Permenev, A., et al. (2020). "xEVM: A Safer and More Ecosystem-Friendly Virtual Machine." *IEEE S&P*. [IEEE](https://ieeexplore.ieee.org/document/9152689)
+- So, S., & Oh, H. (2021). "Smart Contract Optimization via Super-Optimization." *IEEE Transactions on Software Engineering*. [IEEE](https://ieeexplore.ieee.org/document/9459901)
+- Z3 SMT Solver. [GitHub](https://github.com/Z3Prover/z3)
+- Ethereum Yellow Paper: Gas Schedule. [Ethereum](https://ethereum.github.io/yellowpaper/paper.pdf)
+- Chow, S., et al. (2023). "Automated Smart Contract Optimization Using SMT." *arXiv*. [arXiv](https://arxiv.org/abs/2304.09638)
 
-### Approches suggerees
-- Modelisation CP-SAT pour le covering array problem
-- Extension : t-way testing (t > 2), contraintes de seqwuence (tests ordonnes)
-- Integration avec des frameworks de test (pytest, unittest)
-- Comparaison avec AETG, IPO, et autres heuristiques
-
-### Contenu CoursIA connexe
-- **CSP-1-Fundamentals** : AllDifferent, contraintes de couverture — base theorique
-- **CSP-5-Optimization** : minimisation du nombre de tests
-- *Ce sujet est une application industrielle directe des CSP avec un fort impact pratique.*
-
-### Technologies pertinentes
-Python, OR-Tools CP-SAT, pytest
+### Difficulte : 4/5
 
 ---
 
-## Annexe : sujets supprimes (risque de plagiat)
+## E2 - Ordonnancement MEV-resistant de transactions
 
-Les sujets suivants ont ete retires car ils ont deja ete traites par des etudiants d'au moins une ecole (Epita 2025, ECE 2026, EPF 2025/2026), ce qui represente un risque de plagiat inacceptable.
+L'ordonnancement des transactions dans un bloc blockchain est un probleme d'optimisation combinatoire : parmi les transactions en attente (mempool), selectionner et ordonner un sous-ensemble qui maximise les frais collectes par le validateur, sous les contraintes de taille de bloc, de dependances entre transactions (nonce), et de protection contre le MEV (Maximal Extractable Value). Ce probleme combine le Knapsack (selection) et le TSP (ordonnancement) avec des contraintes de precedences specifiques a la blockchain.
 
-| # | Sujet | Traite par |
-|---|-------|-----------|
-| - | Nurse Rostering | Epita 2025 + ECE 2026 |
-| - | Job-Shop Scheduling | Epita 2025 + EPF |
-| - | VRP classique | EPF |
-| - | Timetabling universitaire | Epita 2025 + EPF |
-| - | Sports Tournament Scheduling | Epita 2025 + ECE 2026 |
-| - | Sudoku | Epita 2025 |
-| - | Wordle Solver | Epita 2025 + ECE 2026 + EPF |
-| - | Minesweeper/Demineur | Epita 2025 (3 groupes!) + ECE 2026 + EPF |
-| - | Mots-croises | Epita 2025 + ECE 2026 + EPF |
-| - | Stable Marriage | EPF |
-| - | Graph/Map Coloring | ECE 2026 |
-| - | Product Configuration | Epita 2025 + EPF |
-| - | Portfolio Optimization | Epita 2025 + ECE 2026 |
-| - | Quoridor | Epita 2025 |
-| - | Multi-Robot Warehouse | Epita 2025 |
-| - | Student Allocation | Epita 2025 |
-| - | Test Generation | Epita 2025 |
-| - | Satellite Scheduling | Epita 2025 |
-| - | Tourist Itinerary | Epita 2025 |
+### Objectifs
+- Modeliser la selection et l'ordonnancement de transactions comme un probleme CP-SAT (Knapsack + precedences)
+- Implementer les contraintes de taille de bloc, de nonce (ordre des transactions par adresse), et de gas limit
+- Ajouter des mecanismes anti-MEV (randomisation partielle, encryption, commit-reveal)
+- Evaluer sur des donnees de mempool Ethereum (MEV-Geth logs, Flashbots auctions)
+- Comparer les strategies greediest-fee, CP-SAT optimale, et MEV-Boost
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SC-7 Solidity Advanced | [SymbolicAI/SmartContracts/02-Solidity-Advanced/SC-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/02-Solidity-Advanced/SC-7.ipynb) | Gas, transactions |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Knapsack, selection |
+| GameTheory/ | [GameTheory/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/GameTheory) | Encheres, strategies |
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4.ipynb) | Ordonnancement |
+
+### References externes
+- Daian, P., et al. (2020). "Flash Boys 2.0: Frontrunning in Decentralized Exchanges, Miner Extractable Value, and Consensus Instability." *IEEE S&P*. [IEEE](https://ieeexplore.ieee.org/document/9152675)
+- Flashbots Research. [writings.flashbots.net](https://writings.flashbots.net/)
+- Ethereum Mempool Architecture. [ethereum.org](https://ethereum.org/en/developers/docs/transactions/)
+- Quintus, M., et al. (2022). "Fair Sequencing in Blockchain: MEV Resistance." *AFT'22*. [ACM](https://dl.acm.org/doi/10.1145/3559500)
+
+### Difficulte : 3/5
+
+---
+
+## E3 - Synthese de circuits Zero-Knowledge sous contraintes
+
+La synthese de circuits Zero-Knowledge (ZK circuits) consiste a compiler un programme (ou une assertion mathematique) en un circuit arithmetique (R1CS - Rank-1 Constraint System) qui peut etre prouve en zero-knowledge. Le defi est de minimiser le nombre de contraintes (qui determine le temps de preuve et la taille de la preuve) tout en preservant la correction fonctionnelle. Ce probleme d'optimisation se modelise naturellement en CP/SMT : chaque porte du circuit est une contrainte, et l'objectif est de minimiser le nombre de contraintes.
+
+### Objectifs
+- Modeliser la synthese de circuits ZK comme un probleme d'optimisation sous contraintes d'equivalence avec CP-SAT
+- Implementer la generation de contraintes R1CS a partir d'une representation intermediaire
+- Optimiser le nombre de contraintes par elimination de sous-expressions communes et selection d'operations
+- Evaluer sur des primitives cryptographiques (hash functions, signatures) et des circuits courants
+- Comparer avec les compilateurs existants (Circom, Noir, Halo2)
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SC-15 Cryptography ZKP | [SymbolicAI/SmartContracts/04-Privacy-Cryptography/SC-15.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/04-Privacy-Cryptography/SC-15.ipynb) | Zero-Knowledge Proofs |
+| SC-16 Homomorphic Encryption | [SymbolicAI/SmartContracts/04-Privacy-Cryptography/SC-16.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/04-Privacy-Cryptography/SC-16.ipynb) | Cryptographie avancee |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | SMT solving |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation CSP |
+
+### References externes
+- Ben-Sasson, E., et al. (2018). "Scalable, Transparent, and Post-Quantum Secure Computational Integrity." *IACR Cryptology ePrint Archive*. [ePrint](https://eprint.iacr.org/2018/046)
+- Circom Language Documentation. [iden3.io](https://docs.circom.io/)
+- Gabizon, A., et al. (2019). "PLONK: Permutations over Lagrange-Bases for Oecumenical Noninteractive Arguments of Knowledge." *ePrint*. [ePrint](https://eprint.iacr.org/2019/953)
+- Thaler, J. (2022). "Proofs, Arguments, and Zero-Knowledge." *Foundations and Trends in Privacy and Security*. [Justin Thaler](https://people.cs.georgetown.edu/jthaler/ProofsArgsAndZK.html)
+
+### Difficulte : 4/5
+
+---
+
+## E4 - Allocation de validators PoS par bin-packing
+
+Dans un blockchain Proof-of-Stake (comme Ethereum 2.0), les validateurs sont affectes a des comites pour attester les blocs. L'affectation doit etre equitable (chaque validateur participe a un nombre similaire de comites), doit respecter les contraintes de taille de comite, et doit optimiser la distribution des validateurs appartenant au meme operateur (pour la resistance aux pannes et la decentralisation). Ce probleme se modelise comme un Bin Packing avec des contraintes d'equilibre et d'anti-affinite.
+
+### Objectifs
+- Modeliser l'affectation de validateurs comme un Bin Packing avec contraintes d'equilibre et d'anti-affinite en CP-SAT
+- Implementer les contraintes de taille de comite, d'equilibre (variance minimale), et de separation des operateurs
+- Ajouter la dynamique temporelle (les comites changent periodiquement, les validateurs entrent/sortent)
+- Evaluer sur des donnees Ethereum Beacon Chain (validateurs reels, operateurs connus)
+- Comparer avec l'algorithme actuel d'Ethereum (random shuffled) et un modele PLNE
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Bin Packing, allocation |
+| SC-0 Blockchain Foundations | [SymbolicAI/SmartContracts/00-Foundations/SC-0.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/00-Foundations/SC-0.ipynb) | Blockchain, consensus |
+| GameTheory/ | [GameTheory/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/GameTheory) | Coalitions, equilibre |
+| CSP-7 Soft Constraints | [Search/Part2-CSP/CSP-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-7.ipynb) | Equilibre, penalites |
+
+### References externes
+- Buterin, V., & Griffith, V. (2017). "Casper the Friendly Finality Gadget." *arXiv*. [arXiv](https://arxiv.org/abs/1710.09437)
+- Ethereum 2.0 Specifications: Committee Assignment. [GitHub](https://github.com/ethereum/consensus-specs)
+- Dinh, T.T.A., et al. (2018). "Untangling Blockchain: A Data Processing View of Blockchain Systems." *IEEE TKDE*. [IEEE](https://ieeexplore.ieee.org/document/8293535)
+- Fernandez-Carames, T.M., & Fraga-Lamas, P. (2020). "Towards Post-Quantum Blockchain." *IEEE Access*. [IEEE](https://ieeexplore.ieee.org/document/9043748)
+
+### Difficulte : 3/5
+
+---
+
+## E5 - Verification formelle SMT de vulnerabilites Solidity
+
+La verification formelle des smart contracts consiste a prouver mathematiquement l'absence de vulnerabilites (reentrancy, overflow, access control) en modelisant le contrat comme un systeme de transitions et en verifiant des proprietes de surete (safety) avec un solveur SMT (Z3). Contrairement au fuzz testing qui ne trouve que des bugs, la verification formelle garantit l'absence de classes entieres de vulnerabilites. Le probleme de verification se reduit a la satisfiabilite de formules logiques sur les etats du contrat.
+
+### Objectifs
+- Modeliser un smart contract Solidity comme un systeme de transitions avec etats et variables SMT
+- Implementer la verification de proprietes de surete (no reentrancy, no overflow, access control) avec Z3
+- Generer des contre-exemples (witnesses) quand une propriete est violee
+- Evaluer sur des contrats vulnerables connus (SWC Registry, Damn Vulnerable DeFi)
+- Comparer avec les outils existants (Mythril, Slither, Certora)
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SC-14 Formal Verification | [SymbolicAI/SmartContracts/03-Foundry-Testing/SC-14.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/03-Foundry-Testing/SC-14.ipynb) | Verification formelle |
+| SC-13 Fuzz Testing | [SymbolicAI/SmartContracts/03-Foundry-Testing/SC-13.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/03-Foundry-Testing/SC-13.ipynb) | Tests, proprietes |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Z3 SMT Solver |
+| SC-7 Solidity Advanced | [SymbolicAI/SmartContracts/02-Solidity-Advanced/SC-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/02-Solidity-Advanced/SC-7.ipynb) | Vulnerabilites, securite |
+
+### References externes
+- Feist, J., et al. (2019). "Slither: A Static Analysis Framework for Smart Contracts." *IEEE/WIC/ACM WI*. [GitHub](https://github.com/crytic/slither)
+- SWC Registry: Smart Contract Weakness Classification. [swcregistry.io](https://swcregistry.io/)
+- Alt, L., & Reitwiessner, C. (2018). "SMT-Based Verification of Solidity Smart Contracts." *ISoLA*. [Springer](https://link.springer.com/chapter/10.1007/978-3-030-03421-4_11)
+- Permenev, A., et al. (2020). "VerX: Safety Verification of Smart Contracts." *IEEE S&P*. [IEEE](https://ieeexplore.ieee.org/document/9152646)
+
+### Difficulte : 3/5
+
+---
+
+## F1 - Model checking hardware par SAT (IC3/PDR)
+
+Le model checking materiel consiste a verifier formellement qu'un circuit numerique (processeur, controleur, bus) satisfait une propriete de correction (absence de deadlock, respect du protocole, equivalence avec la specification). L'algorithme IC3/PDR (Property Directed Reachability) est la methode de reference qui utilise un solveur SAT incremental pour explorer l'espace d'etats du circuit de maniere inverse, sans le construire explicitement. C'est un sujet au carrefour de la verification formelle et du SAT solving.
+
+### Objectifs
+- Comprendre et implementer l'algorithme IC3/PDR pour la verification de proprietes de surete sur des circuits digitaux
+- Modeliser un circuit comme un systeme de transitions avec variables booleennes et contraintes SAT
+- Implementer la generation de clauses d'induction et le raffinement iteratif
+- Evaluer sur des circuits de la competition HWMCC (Hardware Model Checking Competition)
+- Comparer avec un model checking BDD-base et l'outil ABC (Berkeley)
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Z3, SAT/SMT solving |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation par contraintes |
+| CSP-6 Hybridation CP+SAT | [Search/Part2-CSP/CSP-6.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6.ipynb) | SAT encoding, hybridation |
+| Search-3 A* | [Search/Part1-Foundations/Search-3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-3.ipynb) | Exploration d'espaces d'etats |
+
+### References externes
+- Bradley, A.R. (2011). "SAT-Based Model Checking without Unrolling." *VMCAI*. [Springer](https://link.springer.com/chapter/10.1007/978-3-642-18275-4_6)
+- Een, N., et al. (2011). "Efficient Implementation of Property Directed Reachability." *FMCAD*. [IEEE](https://ieeexplore.ieee.org/document/6083135)
+- HWMCC: Hardware Model Checking Competition. [fmv.jku.at](https://fmv.jku.at/hwmcc/)
+- Biere, A., et al. (2021). "Handbook of Satisfiability." *IOS Press*, 2nd Edition. [IOS Press](https://iospress.nl/book/handbook-of-satisfiability-2/)
+- ABC: A System for Sequential Synthesis and Verification. [Berkeley](https://people.eecs.berkeley.edu/~alanmi/abc/)
+
+### Difficulte : 4/5
+
+---
+
+## F2 - Cryptanalyse differentielle par SAT
+
+La cryptanalyse differentielle est une technique qui etudie comment les differences entre paires de textes clairs se propagent a travers les tours d'un chiffrement par blocs (AES, DES,PRESENT). L'encodage SAT de cette propagation permet de chercher automatiquement les trajectoires differentielles optimales (celles qui maximisent la probabilite de succes d'une attaque). Chaque tour du chiffrement est encode comme un ensemble de clauses CNF, et le solveur SAT cherche une affectation qui correspond a une trajectoire differentielle valide.
+
+### Objectifs
+- Encoder la propagation differentielle d'un chiffrement par blocs (PRESENT, Skinny, ou AES reduit) en SAT (CNF)
+- Implementer la recherche de trajectoires differentielles optimales avec un solveur SAT (CaDiCaL ou Kissat)
+- Ajouter des contraintes sur la probabilite cumulee et le nombre de tours actifs
+- Evaluer sur des chiffrements de la litterature avec des cles reduites (nombre de tours limite)
+- Comparer les resultats avec les trajectoires differentielles connues dans la litterature cryptographique
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | SAT/SMT solving |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation CSP |
+| CSP-6 Hybridation CP+SAT | [Search/Part2-CSP/CSP-6.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6.ipynb) | SAT encoding |
+| SC-15 Cryptography ZKP | [SymbolicAI/SmartContracts/04-Privacy-Cryptography/SC-15.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/04-Privacy-Cryptography/SC-15.ipynb) | Cryptographie |
+
+### References externes
+- Biere, A. (2021). "CaDiCaL, Kissat MAB and Mate at the SAT Competition 2021." *SAT Competition*. [dblp](https://dblp.org/rec/conf/sat/BiereF21)
+- Mouha, N., & Preneel, B. (2015). "Towards Finding Optimal Differential Characteristics for ARX." *FSE*. [IACR](https://eprint.iacr.org/2015/468)
+- Sun, S., et al. (2013). "Automatic Security Evaluation of Block Ciphers with SAT." *IACR Cryptology ePrint Archive*. [ePrint](https://eprint.iacr.org/2013/056)
+- Bogdanov, A., et al. (2007). "PRESENT: An Ultra-Lightweight Block Cipher." *CHES*. [IACR](https://eprint.iacr.org/2007/332)
+
+### Difficulte : 4/5
+
+---
+
+## F3 - Bounded Model Checking de programmes C
+
+Le Bounded Model Checking (BMC) consiste a verifier qu'un programme C ne viole pas certaines proprietes (absence de debordement de tampon, dereferencement de pointeur null, division par zero) en depliant le programme sur un nombre fini d'etapes (bound) et en encodant les executions possibles comme des formules SAT/SMT. Si le solveur trouve une affectation satisfaisant la negation de la propriete, un contre-exemple (chemin menant au bug) est produit. C'est la technique utilisee par CBMC et ESBMC.
+
+### Objectifs
+- Implementer un BMC simplifie pour un sous-ensemble de C (affectations, conditions, boucles bornees) encodant les executions en SMT (Z3)
+- Gerer les types de base (int, bool, tableaux) et les operations arithmetiques avec debordement
+- Produire des contre-exemples concrets (valeurs d'entree menant au bug) quand une propriete est violee
+- Evaluer sur des programmes C avec des bugs connus (benchmarks SV-COMP)
+- Comparer avec CBMC sur les memes instances
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Z3, SMT solving |
+| CSP-6 Hybridation CP+SAT | [Search/Part2-CSP/CSP-6.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6.ipynb) | SAT encoding |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation |
+| Search-3 A* | [Search/Part1-Foundations/Search-3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-3.ipynb) | Exploration |
+
+### References externes
+- Clarke, E., et al. (2001). "Bounded Model Checking Using Satisfiability Solving." *Formal Methods in System Design*, 19(1), 7-34. [Springer](https://link.springer.com/article/10.1023/A:1012796211709)
+- CBMC: C Bounded Model Checker. [GitHub](https://github.com/diffblue/cbmc)
+- SV-COMP: Competition on Software Verification. [sv-comp.sosy-lab.org](https://sv-comp.sosy-lab.org/)
+- Kroening, D., & Strichman, O. (2008). "Decision Procedures: An Algorithmic Point of View." *Springer*. [Springer](https://link.springer.com/book/10.1007/978-3-540-74105-3)
+
+### Difficulte : 3/5
+
+---
+
+## F4 - Compiler fuzzing par generation SMT d'inputs
+
+Le compiler fuzzing consiste a generer automatiquement des programmes d'entree pour tester un compilateur, dans le but de decouvrir des bugs de compilation (crashes, mauvais code genere, optimisations incorrectes). L'approche SMT-based utilise un solveur SMT pour generer des programmes qui couvrent des chemins specifiques du compilateur ou qui satisfont des contraintes de couverture (ex : chaque branche d'un switch doit etre atteinte). C'est une application de la generation sous contraintes a la validation de compilateurs.
+
+### Objectifs
+- Implementer un generateur de programmes contraints utilisant Z3 pour creer des inputs de test ciblant un compilateur
+- Encoder les contraintes de couverture (branche, chemin, type) comme des formules SMT
+- Implementer la generation de programmes C ou LLVM IR satisfaisant les contraintes
+- Evaluer sur un compilateur cible (GCC, Clang, ou un compilateur educatif)
+- Comparer le taux de decouverte de bugs avec du fuzzing aleatoire (AFL, libFuzzer)
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Z3, contraintes |
+| CSP-6 Hybridation CP+SAT | [Search/Part2-CSP/CSP-6.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6.ipynb) | Generation sous contraintes |
+| SC-13 Fuzz Testing | [SymbolicAI/SmartContracts/03-Foundry-Testing/SC-13.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/03-Foundry-Testing/SC-13.ipynb) | Fuzzing, tests |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation |
+
+### References externes
+- Yang, X., et al. (2011). "Finding and Understanding Bugs in C Compilers." *PLDI*. [ACM](https://dl.acm.org/doi/10.1145/1993498.1993532)
+- Csmith: Random C Program Generator. [GitHub](https://github.com/csmith-project/csmith)
+- Buchhold, F., et al. (2023). "SMT-Based Generation of Provably Correct Compiler Tests." *TACAS*. [Springer](https://link.springer.com/chapter/10.1007/978-3-031-30820-8_8)
+- Livinskii, V., et al. (2020). "Revisiting Compiler Fuzzing." *OOPSLA*. [ACM](https://dl.acm.org/doi/10.1145/3428248)
+
+### Difficulte : 4/5
+
+---
+
+## F5 - Verification SMT de reseaux de regulation genetique
+
+Les reseaux de regulation genetique (Gene Regulatory Networks) modelisent les interactions entre genes, proteines et metabolites dans une cellule. La verification formelle consiste a prouver que ces reseaux satisfont certaines proprietes biologiques (homeostasie, absence d'etats pathologiques, reachabilite d'etats sains) en encodant le reseau comme un systeme de transitions avec des variables booleennes ou entieres, et en verifiant les proprietes avec un solveur SMT. C'est une application fascinante du SAT/SMT a la biologie systemique.
+
+### Objectifs
+- Encoder un reseau de regulation genetique ( modele de Thomas ou reseau booleen) comme un systeme de transitions SMT
+- Implementer la verification de proprietes de surete (absence d'etats pathologiques) et de vivacite (reachabilite d'etats sains)
+- Utiliser Z3 pour explorer l'espace d'etats du reseau et produire des traces d'execution
+- Evaluer sur des reseaux de la litterature (cell cycle de la levure, reseau de l'arabidopsis)
+- Comparer avec des outils specialises (GINsim, BIOCHAM) pour la modelisation biologique
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Z3, SMT solving |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation par contraintes |
+| Search-1 StateSpace | [Search/Part1-Foundations/Search-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-1.ipynb) | Espaces d'etats |
+| Probas/ (Infer.NET) | [Probas/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Probas) | Programmation probabiliste |
+
+### References externes
+- Bernot, G., et al. (2004). "Application of Formal Methods to Biological Regulatory Networks." *Journal of Theoretical Biology*, 229(3), 339-347. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0022519304002007)
+- Thomas, R. (1991). "Regulatory Networks Seen as Asynchronous Automata: A Logical Description." *Journal of Theoretical Biology*, 153(1), 1-23. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0022519305803502)
+- GINsim: Gene Regulatory Network Simulator. [ginsim.org](http://ginsim.org/)
+- Batt, G., et al. (2005). "Symbolic Reachability Analysis of Genetic Regulatory Networks Using Decision Diagrams." *Bioinformatics*, 21(7), 1101-1107. [Oxford](https://academic.oup.com/bioinformatics/article/21/7/1101/220149)
+
+### Difficulte : 3/5
+
+---
+
+## G1 - Planification temporelle PDDL 2.1 + CP hybride
+
+La planification temporelle etend la planification classique (PDDL) en ajoutant des durees, des fenetres temporelles, et des ressources limitées. Le standard PDDL 2.1 supporte les actions duratives et les contraintes numeriques, mais les solveurs de planification classiques (Fast Downward, LAMA) ont des performances limitees sur les instances a forte composante temporelle. L'approche hybride consiste a utiliser PDDL pour la modelisation de haut niveau, puis a traduire le plan en un probleme CP-SAT (IntervalVar, Cumulative) pour l'optimisation fine des ressources temporelles.
+
+### Objectifs
+- Modeliser un probleme de planification temporelle en PDDL 2.1 et le traduire en CP-SAT
+- Implementer les actions duratives, les contraintes numeriques et les ressources avec IntervalVar et Cumulative
+- Comparer les performances du solveur de planification (Fast Downward temporal) et du solveur CP-SAT
+- Etudier les compromis entre expressivite PDDL et efficacite CP-SAT
+- Evaluer sur des benchmarks temporels (International Planning Competition, domains temporal)
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Planners-7 Temporal Planning | [SymbolicAI/Planners/03-Advanced/Planners-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/03-Advanced/Planners-7.ipynb) | PDDL temporel |
+| Planners-1 Foundation | [SymbolicAI/Planners/01-Foundation/Planners-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/01-Foundation/Planners-1.ipynb) | PDDL, planification |
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4.ipynb) | IntervalVar, Cumulative |
+| CSP-6 Hybridation CP+SAT | [Search/Part2-CSP/CSP-6.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6.ipynb) | Hybridation solveurs |
+
+### References externes
+- Fox, M., & Long, D. (2003). "PDDL2.1: An Extension to PDDL for Expressing Temporal Planning Domains." *Journal of Artificial Intelligence Research*, 20, 61-124. [JAIR](https://www.jair.org/index.php/jair/article/view/10352)
+- Fast Downward: Planning System. [fast-downward.org](https://www.fast-downward.org/)
+- Coles, A., et al. (2010). "Forward-Chaining Partial-Order Planning." *ICAPS*. [AAAI](https://ojs.aaai.org/index.php/ICAPS/article/view/17543)
+- International Planning Competition: Temporal Track. [icaps-conference.org](https://www.icaps-conference.org/)
+
+### Difficulte : 4/5
+
+---
+
+## G2 - Planification HTN sous contraintes
+
+La planification HTN (Hierarchical Task Network) decompose recursivement une tache complexe en sous-taches elementaires selon des methodes predefinies, contrairement a la planification classique qui recherche un chemin dans l'espace d'etats. L'ajout de contraintes (precedence, ressources, temps) aux methodes HTN produit des plans plus realistes mais augmente la complexite. La modelisation CP-SAT des contraintes HTN permet d'exploiter la structure hierarchique pour guider la recherche et reduire l'espace combinatoire.
+
+### Objectifs
+- Modeliser un probleme HTN avec contraintes (precedence, ressources, temps) en CP-SAT
+- Implementer la decomposition hierarchique des taches avec des contraintes sur les sous-taches
+- Comparer les performances avec un solveur HTN classique (SHOP2, Panda) sur des benchmarks
+- Etudier l'ajout de contraintes de ressources (personnel, budget) aux methodes de decomposition
+- Evaluer sur des domaines HTN de la litterature (logistique, evacuation, cuisine)
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Planners-9 HTN Planning | [SymbolicAI/Planners/03-Advanced/Planners-9.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/03-Advanced/Planners-9.ipynb) | HTN, decomposition |
+| Planners-1 Foundation | [SymbolicAI/Planners/01-Foundation/Planners-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/01-Foundation/Planners-1.ipynb) | Planification classique |
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4.ipynb) | Contraintes temporelles |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation CSP |
+
+### References externes
+- Erol, K., et al. (1994). "HTN Planning: Complexity and Expressivity." *AAAI*. [AAAI](https://www.aaai.org/Library/AAAI/1994/aaai94-050.php)
+- Nau, D., et al. (2003). "SHOP2: An HTN Planning System." *Journal of Artificial Intelligence Research*, 20, 379-404. [JAIR](https://www.jair.org/index.php/jair/article/view/10302)
+- Bercher, P., et al. (2019). "A Survey on Hierarchical Planning." *KI Journal*. [Springer](https://link.springer.com/article/10.1007/s13218-019-00620-5)
+- Alford, R., et al. (2016). "An Analysis of the Complexity of HTN Planning via Translation to STRIPS." *ICAPS*. [AAAI](https://ojs.aaai.org/index.php/ICAPS/article/view/13757)
+
+### Difficulte : 4/5
+
+---
+
+## G3 - Coordination de drones par Multi-Agent Path Finding
+
+Le Multi-Agent Path Finding (MAPF) consiste a calculer les trajectoires optimales d'un ensemble d'agents (drones, robots) partageant un espace commun, de maniere a ce qu'aucune collision ne se produise et que chaque agent atteigne son objectif. C'est un probleme combinatoire extremement difficile (NP-hard) qui se modelise naturellement en CP-SAT avec des contraintes de non-collision (pas deux agents au meme noeud au meme instant), de mouvement (deplacement vers les voisins uniquement), et d'objectif (chaque agent doit atteindre sa cible).
+
+### Objectifs
+- Modeliser le MAPF comme un probleme CP-SAT avec contraintes de non-collision temporelles
+- Implementer les contraintes de mouvement (grille 2D/3D), d'objectif et de non-collision (sommet et arete)
+- Ajouter des contraintes de capacite (zones a trafic limite) et d'optimisation (minimiser le makespan ou le flowtime)
+- Evaluer sur les benchmarks MAPF de la litterature (Moving AI Lab, grid-based)
+- Comparer avec les algorithmes specialises MAPF (CBS, A* with OD, ECBS)
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Search-3 A* | [Search/Part1-Foundations/Search-3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-3.ipynb) | A*, heuristiques |
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4.ipynb) | IntervalVar, conflits |
+| CSP-9 Distributed CSP | [Search/Part2-CSP/CSP-9.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-9.ipynb) | Multi-agent, coordination |
+| Search-1 StateSpace | [Search/Part1-Foundations/Search-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-1.ipynb) | Espaces d'etats |
+
+### References externes
+- Stern, R., et al. (2019). "Multi-Agent Pathfinding: Definitions, Variants, and Benchmarks." *Symposium on Combinatorial Search (SoCS)*. [arXiv](https://arxiv.org/abs/1906.08291)
+- Sharon, G., et al. (2015). "Conflict-Based Search for Optimal Multi-Agent Pathfinding." *Artificial Intelligence*, 219, 40-66. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0004370214001386)
+- Moving AI Lab: MAPF Benchmarks. [movingai.com](https://movingai.com/benchmarks/mapf/)
+- Felner, A., et al. (2017). "Adding Heuristics to Conflict-Based Search for Multi-Agent Path Finding." *ICAPS*. [AAAI](https://ojs.aaai.org/index.php/ICAPS/article/view/13826)
+
+### Difficulte : 3/5
+
+---
+
+## G4 - Apprentissage d'heuristiques pour solveurs CP
+
+L'apprentissage d'heuristiques (Learning to Search) consiste a entrainer un modele de machine learning (reseau de neurones, arbre de decision) pour predire les meilleures decisions de branchement dans un solveur CP, remplacant les heuristiques manuellement designees. Le solveur CP-SAT de Google utilise deja un composant ML pour le choix des variables (branching), et ce sujet explore comment ameliorer ou specialiser cette approche pour une classe de problemes donnee. C'est un sujet a l'interface ML/CP qui requiert une bonne comprehension des deux domaines.
+
+### Objectifs
+- Comprendre les heuristiques de branchement dans les solveurs CP (VSIDS, activity, first-fail) et les encoder comme features ML
+- Collecter des donnees d'apprentissage en executant le solveur sur des instances de reference et en enregistrant les decisions optimales
+- Entrainer un modele ( Gradient Boosting ou petit reseau de neurones) pour predire la variable a brancher
+- Integrer le modele dans un solveur CP (CPMpy ou mini-solveur custom) et evaluer l'impact sur les performances
+- Comparer les performances (temps de resolution, noeuds explores) avec les heuristiques par defaut
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-6 Hybridation CP+SAT | [Search/Part2-CSP/CSP-6.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6.ipynb) | Solveurs, heuristiques |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Propagation, branchement |
+| Search-3 A* | [Search/Part1-Foundations/Search-3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-3.ipynb) | Heuristiques |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Optimisation, benchmarks |
+
+### References externes
+- Bengio, Y., et al. (2021). "Machine Learning for Combinatorial Optimization: A Methodological Tour d'Horizon." *European Journal of Operational Research*, 290(2), 405-421. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0377221720306901)
+- Cappart, Q., et al. (2021). "Combining Reinforcement Learning and Constraint Programming for Combinatorial Optimization." *AAAI*. [AAAI](https://ojs.aaai.org/index.php/AAAI/article/view/17739)
+- Balcan, M., et al. (2021). "Data-Driven Algorithm Design." *Annual Review of Computer Science*. [Annual Reviews](https://www.annualreviews.org/doi/10.1146/annurev-computersci-012420-101047)
+- Gasse, M., et al. (2019). "Exact Combinatorial Optimization with Graph Convolutional Neural Networks." *NeurIPS*. [arXiv](https://arxiv.org/abs/1906.01629)
+
+### Difficulte : 4/5
+
+---
+
+## H1 - Composition musicale assistee par contraintes
+
+La composition musicale assistee par contraintes consiste a generer des partitions musicales (melodies, harmonies, contrepoint) satisfaisant un ensemble de regles musicales encodees comme des contraintes : regles d'harmonie (accords permis, progressions), de contrepoint (mouvements contraires, intervalles permis), de rythme (metrique, syncope), et de style (tonalite, mode). Ce sujet explore la musique comme un espace de solutions sous contraintes, ou la creativite emerge de la combinaison de regles strictes et de preferences esthetiques.
+
+### Objectifs
+- Modeliser les regles d'harmonie tonale et de contrepoint comme des contraintes CP-SAT sur les hauteurs, durees et accords
+- Implementer les contraintes de mouvement (paralleles interdits, resolutions), de metrique et de tessiture
+- Ajouter des soft constraints pour les preferences stylistiques (style baroque, jazz, contemporain)
+- Generer des partitions en notation ABC ou MIDI et les rendre ecoutables
+- Evaluer qualitativement avec des musiciens et quantitativement (respect des regles, diversite)
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation CSP |
+| CSP-7 Soft Constraints | [Search/Part2-CSP/CSP-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-7.ipynb) | Preferences, penalites |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Optimisation |
+| Search-4 Local Search | [Search/Part1-Foundations/Search-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-4.ipynb) | Recherche locale |
+
+### References externes
+- Anders, T. (2009). "Composing Music by Composing Rules: Computer-Assisted Composition Using Constraint Programming." *PhD Thesis, Queen Mary University of London*. [QMUL](https://ethos.bl.uk/OrderDetails.do?uin=uk.bl.ethos.509680)
+- Truchet, C., & Codognet, P. (2004). "Musical Constraint Satisfaction Problems Applied to Harmony." *Constraints*, 9(1), 23-44. [Springer](https://link.springer.com/article/10.1023/B:CONS.0000004893.29957.51)
+- Strasila: Constraint-Based Music Composition. [GitHub](https://github.com/tanders/strasila)
+- Ames, C. (1989). "The Markov Process as a Compositional Model." *Computer Music Journal*, 13(1), 6-13. [JSTOR](https://www.jstor.org/stable/3679856)
+
+### Difficulte : 3/5
+
+---
+
+## H2 - Generation procedurale de niveaux de jeu (WFC)
+
+La generation procedurale de niveaux par Wave Function Collapse (WFC) consiste a generer des grilles 2D ou 3D (cartes de jeu, donjons, villes) a partir d'un ensemble de tuiles avec des contraintes d'adjacence (quelle tuile peut etre placee a cote de quelle autre). WFC est essentiellement un algorithme de propagation de contraintes (AC-4) avec backtracking, ce qui en fait un sujet ideal pour explorer les liens entre CP et generation de contenu. L'extension CP-SAT permet d'ajouter des contraintes globales (connectivite, difficulte, esthetique) que WFC pur ne supporte pas.
+
+### Objectifs
+- Implementer WFC comme un probleme de satisfaction de contraintes avec CP-SAT (variables = tuiles, contraintes = adjacence)
+- Ajouter des contraintes globales : connectivite du niveau, chemin du joueur, placement d'objets
+- Implementer des contraintes de difficulte (densite d'ennemis, complexite du parcours) et de variete
+- Evaluer sur des ensembles de tuiles existants ( ressources Unity/Godot, WaveFunctionCollapse repo)
+- Comparer la qualite et la diversite des niveaux generes par WFC pur, CP-SAT, et generation aleatoire
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Propagation de contraintes |
+| Search-4 Local Search | [Search/Part1-Foundations/Search-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-4.ipynb) | Recherche locale |
+| CSP-7 Soft Constraints | [Search/Part2-CSP/CSP-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-7.ipynb) | Preferences |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Optimisation |
+
+### References externes
+- Karth, I., & Smith, A.M. (2017). "WaveFunctionCollapse is Constraint Solving in the Wild." *PCG Workshop at FDG*. [arXiv](https://arxiv.org/abs/2105.13960)
+- WaveFunctionCollapse (original implementation). [GitHub](https://github.com/mxgmn/WaveFunctionCollapse)
+- Tabor, J. (2022). "Constraint-Based Procedural Generation: A Survey." *IEEE Transactions on Games*. [IEEE](https://ieeexplore.ieee.org/document/9792255)
+- Smith, A.M., & Mateas, M. (2011). "Answer Set Programming for Procedural Content Generation." *IEEE T-CIAIG*. [IEEE](https://ieeexplore.ieee.org/document/5668232)
+
+### Difficulte : 3/5
+
+---
+
+## H3 - Cryptanalyse par contraintes (ciphers avances)
+
+La cryptanalyse par contraintes consiste a utiliser la programmation par contraintes pour casser (ou analyser la securite de) chiffrements classiques et avances : substitution monoalphabetique, Vigenere, transposition, Hill cipher, et chiffrements par blocs reduits. Contrairement a la cryptanalyse statistique classique (analyse de frequence), l'approche CP encode les proprietes du chiffre et du langage comme des contraintes, permettant de chercher systematiquement la cle dans l'espace des solutions possibles.
+
+### Objectifs
+- Modeliser differents types de chiffrements (substitution, Vigenere, transposition, Hill) comme des problemes CSP
+- Implementer les contraintes linguistiques (bigrammes, trigrammes frequents, dictionnaire) pour guider la recherche
+- Ajouter des contraintes de structure de cle (longueur, caracteres permis) et de texte clair (langue connue)
+- Comparer les performances de CP-SAT avec l'analyse de frequence classique et la force brute
+- Evaluer sur des textes chiffres de reference (cryptogrammes, challenges ACA)
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation CSP |
+| Sudoku-12 Z3 Python | [Sudoku/Sudoku-12-Z3-Python.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Sudoku/Sudoku-12-Z3-Python.ipynb) | Resolution par contraintes |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Z3, raisonnement |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Optimisation |
+
+### References externes
+- Biondi, P., et al. (2022). "Crypyographic Constraint Solving with CryptoMiniSat." *SAC*. [ACM](https://dl.acm.org/doi/10.1145/3471999)
+- Lucks, M. (1990). "A Constraint-Based Cipher." *Eurocrypt*. [IACR](https://link.springer.com/chapter/10.1007/3-540-46877-3_16)
+- American Cryptogram Association (ACA) - Cipher Types and Samples. [cryptogram.org](https://www.cryptogram.org/)
+- simonbyrne/libconstraint-crypto: Constraint-based cipher breaking. [GitHub](https://github.com/simonbyrne/libconstraint-crypto)
+
+### Difficulte : 3/5
+
+---
+
+## H4 - Covering Arrays avec contraintes semantiques
+
+Les Covering Arrays (CA) sont des matrices N x k ou chaque colonne represente un parametre (facteur) avec v valeurs, telles que toute combinaison de t colonnes contienne tous les t-uplets possibles au moins une fois. Les CA sont utilises pour les tests combinatoires de logiciels (t-way testing) : au lieu de tester toutes les combinaisons (v^k), on teste un sous-ensemble qui couvre toutes les interactions de t parametres. L'ajout de contraintes semantiques (certaines combinaisons sont interdites car impossibles dans le systeme reel) rend le probleme plus difficile et plus interessant.
+
+### Objectifs
+- Modeliser la construction de Covering Arrays (t-way) comme un probleme d'optimisation avec CP-SAT
+- Implementer les contraintes de couverture t-way et les contraintes semantiques (combinaisons interdites)
+- Ajouter l'optimisation du nombre de lignes N (minimisation) et la prise en compte des contraintes d'exclusion
+- Evaluer sur des configurations reelles (systemes embarques, APIs REST, interfaces graphiques)
+- Comparer avec les algorithmes gloutons (IPOG, AETG) et les bornes inferieures theoriques
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation CSP |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Optimisation combinatoire |
+| Search-4 Local Search | [Search/Part1-Foundations/Search-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-4.ipynb) | Heuristiques |
+| SC-13 Fuzz Testing | [SymbolicAI/SmartContracts/03-Foundry-Testing/SC-13.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/03-Foundry-Testing/SC-13.ipynb) | Generation de tests |
+
+### References externes
+- Hartman, A., & Raskin, L. (2004). "Problems and Algorithms for Covering Arrays." *Discrete Mathematics*, 284(1-3), 149-156. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0012365X04000980)
+- Cohen, M.B., et al. (2003). "Constructing Test Suites for Interaction Testing." *ICSE*. [IEEE](https://ieeexplore.ieee.org/document/1205210)
+- Nie, C., & Leung, H. (2011). "A Survey of Combinatorial Testing." *ACM Computing Surveys*, 43(2). [ACM](https://dl.acm.org/doi/10.1145/1883612.1883618)
+- NIST: Combinatorial Testing. [nist.gov](https://csrc.nist.gov/projects/automated-combinatorial-testing-for-software)
+
+### Difficulte : 3/5
+
+---
+
+## I1 - Assistant de planification conversationnel (LLM + CSP)
+
+Un assistant de planification conversationnel combine un modele de langage (LLM) pour l'interaction en langage naturel avec un solveur CP-SAT pour la resolution de contraintes. L'utilisateur decrit sa demande en langage naturel ("Je veux organiser un voyage de 5 jours a Rome avec un budget de 2000 euros"), le LLM extrait les contraintes et les parametres, le solveur CP-SAT genere un plan optimal, et le LLM presente le resultat de maniere comprehensible. Le coeur du sujet est la modelisation CP (min 5 types de contraintes, instance reelle), le LLM n'etant que l'interface.
+
+### Objectifs
+- Concevoir un schema d'extraction de contraintes a partir de langage naturel via un LLM (function calling, prompt structure)
+- Implementer un modele CP-SAT avec au moins 5 types de contraintes pour un domaine concret (planning de voyage, ordonnancement, allocation)
+- Gerer les interactions multi-tours : raffinement des contraintes, ajout de preferences, explication des compromis
+- Evaluer la robustesse de l'extraction LLM (taux de conversion correcte, gestion des ambiguites)
+- Comparer avec une interface contrainte (formulaire) pour mesurer l'apport du langage naturel
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-6 Hybridation CP+SAT | [Search/Part2-CSP/CSP-6.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6.ipynb) | LLM+CSP, hybridation |
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4.ipynb) | IntervalVar, planning |
+| CSP-7 Soft Constraints | [Search/Part2-CSP/CSP-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-7.ipynb) | Preferences, compromis |
+| App-17 VRP Logistics | [Search/Applications/CSP/App-17.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/CSP/App-17.ipynb) | Planning, optimisation |
+
+### References externes
+- Ahmetovic, D., et al. (2023). "LLM as a Cognitive Assistant for Constraint Modeling." *CP Conference*. [Springer](https://link.springer.com/chapter/10.1007/978-3-031-47361-5_2)
+- OpenAI Function Calling Guide. [OpenAI](https://platform.openai.com/docs/guides/function-calling)
+- Fuscaldi, M., et al. (2024). "Conversational AI for Optimization Problem Solving." *arXiv*. [arXiv](https://arxiv.org/abs/2401.04720)
+- Model Context Protocol (MCP) Specification. [MCP](https://modelcontextprotocol.io/)
+
+### Difficulte : 3/5
+
+---
+
+## I2 - Explicateur de solutions CP par LLM
+
+L'explication de solutions CP consiste a generer des explications en langage naturel qui decrivent pourquoi une solution donnee est optimale (ou pourquoi aucune solution n'existe), quelles contraintes sont actives (binding), et comment modifier les contraintes pour obtenir un meilleur resultat. L'approche combine l'analyse des contraintes du solveur (shadows prices, conflict analysis) avec un LLM pour produire des explications comprehensibles par un non-expert. C'est un pont entre l'optimisation mathematique et l'intelligence artificielle dialoguee.
+
+### Objectifs
+- Extraire les informations structurelles d'une solution CP-SAT (contraintes actives, marges, conflits)
+- Concevoir un pipeline d'explication : analyse du solveur, structuration des faits, generation en langage naturel
+- Implementer les explications de type "pourquoi cette solution", "pourquoi pas X", et "comment ameliorer"
+- Evaluer la qualite des explications avec des metriques automatiques et une evaluation humaine
+- Comparer avec des explications template-based (sans LLM) sur la clarte et la precision
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-6 Hybridation CP+SAT | [Search/Part2-CSP/CSP-6.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6.ipynb) | LLM+CSP |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation, solutions |
+| CSP-7 Soft Constraints | [Search/Part2-CSP/CSP-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-7.ipynb) | Compromis, marges |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Optimalite |
+
+### References externes
+- Cyras, K., et al. (2021). "Explainable Constraint-Driven Scheduling." *AAAI*. [AAAI](https://ojs.aaai.org/index.php/AAAI/article/view/16677)
+- Fox, M., et al. (2017). "Explainable Planning." *IJCAI Workshop on XAI*. [arXiv](https://arxiv.org/abs/1709.10256)
+- Guidotti, R., et al. (2018). "A Survey of Methods for Explaining Black Box Models." *ACM Computing Surveys*, 51(5). [ACM](https://dl.acm.org/doi/10.1145/3236009)
+- Rago, A., et al. (2023). "Argumentative Explanations for Constraint Optimization." *KR*. [CEUR](https://ceur-ws.org/Vol-3361/)
+
+### Difficulte : 3/5
+
+---
+
+## I3 - Modelisation CP assistee par LLM
+
+La modelisation CP assistee par LLM consiste a utiliser un modele de langage pour transformer automatiquement une description en langage naturel d'un probleme d'optimisation en un modele CP-SAT executable. Le defi est de capturer les contraintes implicites (celles que le formulateur oublie de mentionner car evidentes pour lui), de choisir les bonnes variables de decision, et de generer un code correct. Ce sujet est a l'avant-garde de la recherche en IA symbolique/neuro-symbolique et requiert une maitrise solide de la modelisation CP.
+
+### Objectifs
+- Concevoir un pipeline de transformation NL vers CP-SAT : analyse du probleme, identification des variables, extraction des contraintes, generation du code
+- Implementer la verification de correction du modele genere (propriétés de base : faisabilite, bornes, symetries)
+- Evaluer sur un benchmark de problemes d'optimisation decrits en langage naturel (10+ problemes variés)
+- Analyser les echecs de generation (contraintes manquantes, variables incorrectes) et proposer des strategies de correction
+- Comparer avec la modelisation manuelle par un expert CP (qualite, temps, couverture des contraintes)
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-6 Hybridation CP+SAT | [Search/Part2-CSP/CSP-6.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6.ipynb) | LLM+CSP |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Optimisation |
+| Search-9 Programmation lineaire | [Search/Part1-Foundations/Search-9.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-9.ipynb) | Formulation mathematique |
+
+### References externes
+- Ahmetovic, D., et al. (2023). "LLM as a Cognitive Assistant for Constraint Modeling." *CP Conference*. [Springer](https://link.springer.com/chapter/10.1007/978-3-031-47361-5_2)
+- Michelioudakis, A., et al. (2024). "Constraint Modeling from Natural Language with LLMs." *arXiv*. [arXiv](https://arxiv.org/abs/2405.11707)
+- Cappart, Q., et al. (2023). "A Survey on the Integration of Machine Learning and Constraint Programming." *Constraints*. [Springer](https://link.springer.com/article/10.1007/s10601-023-09348-7)
+- GCode: Generating Optimization Code from Natural Language. [GitHub](https://github.com/optsuite/gcode)
+
+### Difficulte : 4/5
+
+---
+
+## J1 - Allocation multicritere de candidats
+
+L'allocation multicritere de candidats consiste a affecter des candidats a des postes (ou des etudiants a des projets, des employes a des equipes) en tenant compte de multiples criteres : competences, preferences, disponibilite, diversite, equite. C'est une extension du probleme de Stable Marriage avec des criteres multiples et des contraintes de capacite. La modelisation CP-SAT permet de capturer les contraintes dures (competences minimum, quotas de diversite) et les preferences comme soft constraints avec ponderation.
+
+### Objectifs
+- Modeliser l'allocation multicritere comme un probleme d'affectation avec preferences et contraintes de capacite en CP-SAT
+- Implementer les contraintes de competences (matching skills/requirements), de diversite (quotas), et d'equite
+- Ajouter les preferences des candidats et des recruteurs comme soft constraints avec penalites ponderees
+- Evaluer sur des instances reelles ou synthetiques (donnees RH, affectation d'etudiants)
+- Comparer avec l'algorithme de Gale-Shapley (Stable Marriage) et un modele PLNE
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| GameTheory/ | [GameTheory/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/GameTheory) | Stable Marriage, Shapley Value |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Affectation, optimisation |
+| CSP-7 Soft Constraints | [Search/Part2-CSP/CSP-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-7.ipynb) | Preferences, penalites |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation CSP |
+
+### References externes
+- Gale, D., & Shapley, L.S. (1962). "College Admissions and the Stability of Marriage." *American Mathematical Monthly*, 69(1), 9-15. [JSTOR](https://www.jstor.org/stable/2312726)
+- Manlove, D.F. (2013). "Algorithmics of Matching Under Preferences." *World Scientific*. [World Scientific](https://www.worldscientific.com/worldscibooks/10.1142/8591)
+- Drummond, J., & Boutilier, C. (2014). "Elicitation and Approximately Stable Matching with Partial Preferences." *AAMAS*. [ACM](https://dl.acm.org/doi/10.5555/2615731.2616062)
+- Irving, R.W. (1998). "Matching Medical Students to Pairs of Hospitals." *Algorithmica*, 20, 129-143. [Springer](https://link.springer.com/article/10.1007/PL00009189)
+
+### Difficulte : 3/5
+
+---
+
+## J2 - Enchere combinatoire et Winner Determination
+
+L'enchere combinatoire permet aux soumissionnaires de placer des offres sur des combinaisons d'items (et non sur des items individuels), capturant ainsi les synergies et les complementarites. Le probleme du Winner Determination (WDP) consiste a determiner l'ensemble d'offres gagnantes qui maximise les revenus du vendeur, sous la contrainte qu'un item ne peut etre attribue qu'une seule fois. C'est un probleme d'optimisation combinatoire (Set Packing) qui se modelise directement en CP-SAT ou PLNE, avec des applications dans les telecommunications (spectre 5G), la logistique et les marches publics.
+
+### Objectifs
+- Modeliser le Winner Determination Problem comme un Set Packing avec CP-SAT (variables binaires par offre)
+- Implementer les contraintes d'exclusivite (un item = au plus une offre gagnante) et de budget
+- Ajouter les contraintes de type XOR (un soumissionnaire ne peut gagner qu'une offre parmi un groupe)
+- Evaluer sur les benchmarks CATS (Combinatorial Auction Test Suite) et comparer avec un modele PLNE
+- Etendre aux encheres VCG (Vickrey-Clarke-Groves) pour calculer les paiements optimaux
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| GameTheory/ | [GameTheory/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/GameTheory) | Encheres, Mechanism Design |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Set Packing, Knapsack |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation |
+| Search-9 Programmation lineaire | [Search/Part1-Foundations/Search-9.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-9.ipynb) | PLNE, relaxation |
+
+### References externes
+- Cramton, P., et al. (2006). "Combinatorial Auctions." *MIT Press*. [MIT Press](https://mitpress.mit.edu/9780262033428/combinatorial-auctions/)
+- Leyton-Brown, K., et al. (2000). "CATS: Combinatorial Auction Test Suite." *EC*. [UMich](https://www.cs.ubc.ca/~kevinlb/CATS/)
+- Rothkopf, M.H., et al. (1998). "Computationally Manageable Combinatorial Auctions." *Management Science*, 44(8), 1131-1147. [INFORMS](https://pubsonline.informs.org/doi/abs/10.1287/mnsc.44.8.1131)
+- Sandholm, T. (2002). "Algorithm for Optimal Winner Determination in Combinatorial Auctions." *Artificial Intelligence*, 135(1-2), 1-54. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0004370201001592)
+
+### Difficulte : 4/5
+
+---
+
+## J3 - Allocation de ressources par mecanisme incitatif
+
+L'allocation de ressources par mecanisme incitatif (Mechanism Design) consiste a concevoir des regles d'allocation qui incitent les agents a reveler leurs vraies preferences (truthfulness), tout en maximisant le bien-etre social ou les revenus. Le probleme central est le Winner Determination (calcul de l'allocation optimale) sous contraintes de veracite (incentive compatibility). La modelisation CP-SAT permet de capturer les contraintes d'allocation (capacite, budget) et d'optimiser le bien-etre social sous contraintes d'incitation.
+
+### Objectifs
+- Modeliser le probleme d'allocation avec mecanisme incitatif comme un probleme d'optimisation sous contraintes en CP-SAT
+- Implementer les contraintes d'allocation (capacite, budget, exclusivite) et d'incitation (veracite)
+- Calculer les paiements VCG (Vickrey-Clarke-Groves) pour garantir la veracite
+- Evaluer sur des scenarios d'allocation de ressources publics (spectre radio, periodes de vol, logements)
+- Comparer avec des mecanismes non-incitatifs (enchere au premier prix) sur l'efficacite et l'equite
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| GameTheory/ | [GameTheory/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/GameTheory) | Mechanism Design, Nash |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Allocation, optimisation |
+| CSP-7 Soft Constraints | [Search/Part2-CSP/CSP-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-7.ipynb) | Compromis, equite |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation |
+
+### References externes
+- Nisan, N., & Ronen, A. (2001). "Algorithmic Mechanism Design." *Games and Economic Behavior*, 35(1-2), 166-196. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0899825600908669)
+- Vickrey, W. (1961). "Counterspeculation, Auctions, and Competitive Sealed Tenders." *Journal of Finance*, 16(1), 8-37. [Wiley](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1540-6261.1961.tb02789.x)
+- Clarke, E.H. (1971). "Multipart Pricing of Public Goods." *Public Choice*, 11, 17-33. [Springer](https://link.springer.com/article/10.1007/BF01426210)
+- Roughgarden, T. (2016). "Twenty Lectures on Algorithmic Game Theory." *Cambridge University Press*. [Cambridge](https://www.cambridge.org/core/books/twenty-lectures-on-algorithmic-game-theory/)
+
+### Difficulte : 4/5
+
+---
+
+## K1 - Planification urbaine et placement d'infrastructures
+
+La planification urbaine sous contraintes consiste a determiner l'emplacement optimal d'infrastructures (hopitaux, ecoles, centres commerciaux, parcs, stations de recharge) dans une zone urbaine, en maximisant la couverture de la population sous des contraintes de budget, de superficie disponible, de distance maximum aux residents, et de compatibilite entre infrastructures. C'est un probleme de theorie de la localisation (p-median, p-center, MCLP) directement modelisable en CP-SAT avec des variables binaires de localisation et des contraintes de couverture.
+
+### Objectifs
+- Modeliser le placement d'infrastructures comme un probleme de localisation (p-median/MCLP) avec CP-SAT
+- Implementer les contraintes de budget, de superficie, de distance maximum et de compatibilite entre sites
+- Ajouter les contraintes de couverture equitable (minimiser la variance d'accessibilite entre quartiers)
+- Evaluer sur des donnees urbaines reelles (OpenStreetMap, donnees INSEE) et des benchmarks synthetiques
+- Visualiser les solutions sur une carte (folium, geopandas) pour faciliter l'analyse
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Allocation, localisation |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation CSP |
+| Search-9 Programmation lineaire | [Search/Part1-Foundations/Search-9.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-9.ipynb) | PLNE, localisation |
+| CSP-7 Soft Constraints | [Search/Part2-CSP/CSP-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-7.ipynb) | Equite, preferences |
+
+### References externes
+- Church, R., & ReVelle, C. (1974). "The Maximal Covering Location Problem." *Papers of the Regional Science Association*, 32, 101-118. [Springer](https://link.springer.com/chapter/10.1007/978-3-642-51081-8_6)
+- Current, J., et al. (2002). "Facility Location: Applications and Theory." *Springer*. [Springer](https://link.springer.com/book/10.1007/978-3-642-56038-7)
+- Daskin, M.S. (2013). "Network and Discrete Location." *Wiley*. [Wiley](https://www.wiley.com/en-us/Network+and+Discrete+Location%3A+Models%2C+Algorithms%2C+and+Applications%2C+2nd+Edition-p-9780470905364)
+- Murray, A.T. (2016). "Maximal Coverage Location Problem: Impacts, Significance, and Evolution." *International Regional Science Review*, 39(1), 5-27. [SAGE](https://journals.sagepub.com/doi/abs/10.1177/0160017615607229)
+
+### Difficulte : 3/5
+
+---
+
+## K2 - Allocation de frequences radio
+
+L'allocation de frequences radio (Frequency Assignment Problem, FAP) consiste a attribuer des frequences a des emetteurs radio de maniere a minimiser les interferences, sous des contraintes d'ecart minimal entre frequences d'emetteurs adjacents (geographiquement proches), de spectre disponible (bande de frequences limitee), et de demande variable. C'est un probleme de coloration de graphe contraint qui se modelise naturellement en CSP : chaque emetteur est une variable, chaque frequence est une valeur, et les contraintes d'ecart sont des contraintes binaires.
+
+### Objectifs
+- Modeliser le FAP comme un probleme de coloration de graphe contraint avec CP-SAT
+- Implementer les contraintes d'ecart (co-channel, adjacent channel), de spectre (bande limitee), et de demande
+- Ajouter la minimisation de l'interference totale (somme des violations ponderees) comme soft constraint
+- Evaluer sur les benchmarks COST 259 et GRAPH-BASE de la litterature
+- Comparer avec DSATUR (coloration gloutonne) et un modele PLNE
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Coloration, CSP |
+| CSP-7 Soft Constraints | [Search/Part2-CSP/CSP-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-7.ipynb) | Minimisation violations |
+| Search-4 Local Search | [Search/Part1-Foundations/Search-4.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-4.ipynb) | Heuristiques de coloration |
+| App-8 MiniZinc | [Search/Applications/CSP/App-8.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/CSP/App-8.ipynb) | Modelisation MiniZinc |
+
+### References externes
+- Aardal, K.I., et al. (2007). "Models and Solution Techniques for Frequency Assignment Problems." *4OR*, 5(4), 261-317. [Springer](https://link.springer.com/article/10.1007/s10288-007-0048-4)
+- Hale, W.K. (1980). "Frequency Assignment: Theory and Applications." *Proceedings of the IEEE*, 68(12), 1497-1514. [IEEE](https://ieeexplore.ieee.org/document/1457947)
+- COST 259: Wireless Flexible Personalised Communications. [IEEE](https://ieeexplore.ieee.org/xpl/conhome/10000/proceeding)
+- CSPLib Problem 020: Frequency Assignment. [csplib.org](https://www.csplib.org/Problems/prob020/)
+
+### Difficulte : 3/5
+
+---
+
+## K3 - Optimisation multiobjectif sous contraintes
+
+L'optimisation multiobjectif sous contraintes consiste a optimiser simultanement plusieurs objectifs contradictoires (minimiser le cout et maximiser la qualite, minimiser le temps et maximiser la couverture) sous des contraintes de faisabilite. La solution n'est pas un optimum unique mais un ensemble de solutions Pareto-optimales (aucun objectif ne peut etre ameliore sans degrader un autre). CP-SAT supporte nativement l'optimisation multiobjectif par ponderation ou epsilon-constraint. Ce sujet est transversal et s'applique a de nombreux domaines (logistique, energie, finance).
+
+### Objectifs
+- Implementer l'optimisation multiobjectif en CP-SAT via ponderation, epsilon-constraint, ou Pareto front
+- Modeliser un probleme concret avec 3+ objectifs contradictoires (ex : cout, temps, qualite, impact environnemental)
+- Calculer et visualiser le front de Pareto (ensemble des solutions non dominees)
+- Implementer des strategies de navigation dans le front de Pareto (preference-based, interactive)
+- Comparer les approches de resolution (ponderation fixe, epsilon-constraint, NSGA-II hybride)
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5.ipynb) | Optimisation, objectifs multiples |
+| CSP-7 Soft Constraints | [Search/Part2-CSP/CSP-7.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-7.ipynb) | Compromis, penalites |
+| App-10 Portfolio | [Search/Applications/Hybrid/App-10.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/Hybrid/App-10.ipynb) | Optimisation multiobjectif (rendement/risque) |
+| Search-11 Metaheuristiques | [Search/Part1-Foundations/Search-11.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-11.ipynb) | NSGA-II, metaheuristiques |
+
+### References externes
+- Deb, K., et al. (2002). "A Fast and Elitist Multiobjective Genetic Algorithm: NSGA-II." *IEEE Transactions on Evolutionary Computation*, 6(2), 182-197. [IEEE](https://ieeexplore.ieee.org/document/996017)
+- Miettinen, K. (1999). "Nonlinear Multiobjective Optimization." *Springer*. [Springer](https://link.springer.com/book/10.1007/978-1-4615-5563-6)
+- OR-Tools CP-SAT: Multi-Objective Optimization. [Google Developers](https://developers.google.com/optimization/cp/cp_solver#multi_objective)
+- Coello, C.A.C., et al. (2007). "Evolutionary Algorithms for Solving Multi-Objective Problems." *Springer*, 2nd Edition. [Springer](https://link.springer.com/book/10.1007/978-0-387-36797-2)
+
+### Difficulte : 4/5
+
+---
+
+## L1 - Participation a une competition CP/SAT/SMT
+
+Ce meta-sujet consiste a participer a une competition academique de programmation par contraintes (MiniZinc Challenge, SAT Competition, SMT Competition, MaxSAT Evaluation, CSP Competition) en implementant un solveur, un encodeur, ou une heuristique competif. La participation seule ne suffit pas : le livrable doit inclure une analyse des choix techniques, une comparaison avec l'etat de l'art, et une documentation des innovations apportees. Ce sujet est ideal pour les etudiants voulant aller en profondeur sur un aspect specifique du solving.
+
+### Objectifs
+- Choisir une competition cible et comprendre les regles, les formats d'entree/sortie, et les metriques d'evaluation
+- Implementer un composant competif (solveur, encodeur, preprocesseur, ou heuristique)
+- Analyser les performances sur les instances de competition (scaling, robustesse, forces/faiblesses)
+- Documenter les innovations techniques et les comparer avec les approches de la litterature
+- Produire un rapport detaille incluant les resultats, les analyses, et les pistes d'amelioration
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-6 Hybridation CP+SAT | [Search/Part2-CSP/CSP-6.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6.ipynb) | Solveurs, encodage |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1.ipynb) | Modelisation |
+| App-8 MiniZinc | [Search/Applications/CSP/App-8.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/CSP/App-8.ipynb) | MiniZinc, benchmarks |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | SMT solving |
+
+### References externes
+- SAT Competition. [satcompetition.github.io](https://satcompetition.github.io/)
+- MiniZinc Challenge. [minizinc.org](https://www.minizinc.org/challenge.html)
+- SMT Competition. [smtcomp.github.io](https://smtcomp.github.io/)
+- MaxSAT Evaluation. [maxsat-evaluations.github.io](https://maxsat-evaluations.github.io/)
+- Biere, A., et al. (2021). "Handbook of Satisfiability." *IOS Press*, 2nd Edition. [IOS Press](https://iospress.nl/book/handbook-of-satisfiability-2/)
+
+### Difficulte : Variable
+
+---
+
+## Annexe : Sujets interdits (anti-plagiat)
+
+Les sujets suivants ont ete traites dans des editions precedentes (EPITA 2025, EPF, ECE) et sont **strictement interdits** pour cette edition 2026. Toute reprise, meme sous forme de variante avancee, sera consideree comme du plagiat.
+
+1. Nurse Rostering Problem (EPITA 2025)
+2. Job-Shop Scheduling basique (EPITA 2025)
+3. Student Project Allocation / Stable Marriage classique (EPITA 2025)
+4. Picross Solver (EPITA 2025)
+5. Constraint-Based City Generation (EPITA 2025)
+6. Sports Tournament Scheduling (EPITA 2025)
+7. Tourist Itinerary Planner (EPITA 2025)
+8. Sudoku Solver (EPITA 2025 + CoursIA)
+9. CSP Wordle Solver (EPITA 2025 + EPF + ECE)
+10. Mots-croises / Crossword CSP (EPITA 2025 + EPF + ECE)
+11. Quoridor (EPITA 2025)
+12. Multi-robot Warehouse Task Assignment (EPITA 2025)
+13. Product Configuration sous contraintes (EPITA 2025)
+14. Timetabling / Emploi du temps (EPITA 2025 + EPF + ECE)
+15. Minesweeper / Demineur CSP (EPITA 2025 + EPF + ECE)
+16. Portfolio Optimization classique (EPITA 2025)
+17. Graph Coloring basique (ECE)
+18. Satellite Capture Scheduler (EPITA 2025)
+19. Automatic Tests Generation basique (EPITA 2025)
+
+**Note :** Si un sujet de cette liste vous interesse, vous pouvez le proposer comme base dans une categorie L (Competition) si vous apportez une contribution technique significative (nouvelle heuristique, nouveau modele, benchmark original). Contactez l'equipe pedagogique pour validation prealable.
+
+---
+
+*Derniere mise a jour : Avril 2026*
+*Contact : Equipe pedagogique Programmation par Contraintes, EPITA SCIA*
