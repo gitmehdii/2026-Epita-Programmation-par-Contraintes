@@ -56,26 +56,26 @@ H3-Cryptanalyse_par_Contraintes/
 ├── notebooks/                              ← notebooks Jupyter à exécuter dans l'ordre
 │   ├── H3-1-Substitution.ipynb            [✓] Substitution mono — 3 approches + benchmark
 │   ├── H3-2-Vigenere.ipynb                [✓] Vigenère — IC + Kasiski + CP-SAT
-│   ├── H3-3-Transposition.ipynb           [ ] À faire
-│   ├── H3-4-Hill.ipynb                    [ ] À faire
-│   └── H3-5-Evaluation.ipynb              [ ] À faire
+│   ├── H3-3-Transposition.ipynb           [✓] Transposition — CP-SAT + benchmark
+│   ├── H3-4-Hill.ipynb                    [✓] Hill cipher — connu + seul + benchmark
+│   └── H3-5-Evaluation.ipynb              [✓] Benchmark comparatif global
 │
 ├── core/
 │   ├── ciphers/
 │   │   ├── substitution.py                [✓] encrypt / decrypt / key_accuracy
 │   │   ├── vigenere.py                    [✓] encrypt / decrypt / str_to_key / key_to_str
-│   │   ├── transposition.py               [ ] À faire
-│   │   └── hill.py                        [ ] À faire
+│   │   ├── transposition.py               [✓] encrypt / decrypt / generate_random_key
+│   │   └── hill.py                        [✓] encrypt / decrypt / known_plaintext_attack
 │   ├── solvers/
 │   │   ├── cp_substitution.py             [✓] CP-SAT : AllDifferent + coûts bigrammes + unigrammes
 │   │   ├── cp_vigenere.py                 [✓] CP-SAT : agrégation par paire de positions-clé
 │   │   ├── hill_climbing.py               [✓] Hill climbing bigrammes/trigrammes + restarts
-│   │   ├── cp_transposition.py            [ ] À faire
-│   │   └── cp_hill.py                     [ ] À faire
+│   │   ├── cp_transposition.py            [✓] CP-SAT : AllDifferent + table agrégée within-row
+│   │   └── cp_hill.py                     [✓] CP-SAT : connu (mod 26) + seul (bigrammes)
 │   ├── linguistics/
 │   │   └── frequency_analysis.py          [✓] IC, Kasiski, bigrammes, trigrammes, freq attack
 │   └── evaluation/
-│       └── (benchmark.py)                 [ ] À faire
+│       └── benchmark.py                   [✓] run_trials, print_table, compare_approaches
 │
 └── data/
     ├── french_reference.txt               [✓] 8 314 lettres de référence
@@ -349,9 +349,9 @@ print(res['key_str'])  # → FRANCE
 |----------|---------|--------|
 | `H3-1-Substitution.ipynb` | Substitution mono, 3 approches, benchmark | ✓ Terminé |
 | `H3-2-Vigenere.ipynb` | IC, Kasiski, CP-SAT, pipeline complet | ✓ Terminé |
-| `H3-3-Transposition.ipynb` | Transposition, permutation CP-SAT | En cours |
-| `H3-4-Hill.ipynb` | Hill cipher, algèbre mod 26 | En cours |
-| `H3-5-Evaluation.ipynb` | Benchmark comparatif global | En cours |
+| `H3-3-Transposition.ipynb` | Transposition, permutation CP-SAT | ✓ Terminé |
+| `H3-4-Hill.ipynb` | Hill cipher, algèbre mod 26 | ✓ Terminé |
+| `H3-5-Evaluation.ipynb` | Benchmark comparatif global | ✓ Terminé |
 
 ---
 
@@ -374,16 +374,16 @@ print(res['key_str'])  # → FRANCE
   - [x] `data/french_bigrams_standard.json` — 676 bigrammes
   - [x] `data/french_trigrams_standard.json` — 17 576 trigrammes
 
-### En cours / À faire
+### Terminé ✓ (suite)
 
-- [ ] **H3-3 — Transposition**
-  - [ ] `core/ciphers/transposition.py`
-  - [ ] `core/solvers/cp_transposition.py`
-  - [ ] `notebooks/H3-3-Transposition.ipynb`
-- [ ] **H3-4 — Hill cipher**
-  - [ ] `core/ciphers/hill.py`
-  - [ ] `core/solvers/cp_hill.py` — contrainte d'inversibilité mod 26
-  - [ ] `notebooks/H3-4-Hill.ipynb`
-- [ ] **H3-5 — Évaluation**
-  - [ ] `core/evaluation/benchmark.py`
-  - [ ] `notebooks/H3-5-Evaluation.ipynb` — benchmark global + courbes
+- [x] **H3-3 — Transposition columnar**
+  - [x] `core/ciphers/transposition.py` — encrypt, decrypt, generate_random_key, key_accuracy
+  - [x] `core/solvers/cp_transposition.py` — AllDifferent + table agrégée within-row, L-1 contraintes
+  - [x] `notebooks/H3-3-Transposition.ipynb` — IC conservé, CP-SAT, benchmark L=4..8
+- [x] **H3-4 — Hill cipher**
+  - [x] `core/ciphers/hill.py` — encrypt, decrypt, known_plaintext_attack, _matrix_inv_mod26
+  - [x] `core/solvers/cp_hill.py` — attaque connue (linéaire mod 26) + attaque seule (bigrammes)
+  - [x] `notebooks/H3-4-Hill.ipynb` — algèbre, CP-SAT connu (100%), CP-SAT seul
+- [x] **H3-5 — Évaluation comparée**
+  - [x] `core/evaluation/benchmark.py` — run_trials, print_table, compare_approaches
+  - [x] `notebooks/H3-5-Evaluation.ipynb` — benchmark global 4 chiffrements + courbes
